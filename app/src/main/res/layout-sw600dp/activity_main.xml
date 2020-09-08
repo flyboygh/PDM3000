@@ -10,7 +10,6 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="平板电脑"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.500"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -20,19 +19,19 @@
 
     <Button
         android:id="@+id/button4"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:layout_marginEnd="50dp"
-        android:text="参数设置"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_marginEnd="40dp"
+        android:text="@string/param_set"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button5"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/button5"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:text="文件复制"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:text="@string/file_copy"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,10 +39,10 @@
 
     <Button
         android:id="@+id/button6"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:layout_marginStart="50dp"
-        android:text="文件浏览"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_marginStart="40dp"
+        android:text="@string/file_view"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/button5"
         app:layout_constraintTop_toTopOf="parent" />

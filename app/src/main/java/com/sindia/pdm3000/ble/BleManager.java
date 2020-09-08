@@ -63,6 +63,7 @@ public class BleManager {
         BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
         scanner.stopScan(scanCallback);
         mScanResultList.clear();
+        bleDeviceScan.onBleDeviceChanged(mScanResultList);
         return true;
     }
 

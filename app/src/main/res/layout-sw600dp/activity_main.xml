@@ -18,17 +18,17 @@
         app:layout_constraintVertical_bias="0.16000003" />
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/buttonParamSet"
         android:layout_width="180dp"
         android:layout_height="180dp"
         android:layout_marginEnd="40dp"
         android:text="@string/param_set"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/button5"
+        app:layout_constraintEnd_toStartOf="@+id/buttonFileCopy"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/buttonFileCopy"
         android:layout_width="180dp"
         android:layout_height="180dp"
         android:text="@string/file_copy"
@@ -38,13 +38,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button6"
+        android:id="@+id/buttonFileView"
         android:layout_width="180dp"
         android:layout_height="180dp"
         android:layout_marginStart="40dp"
         android:text="@string/file_view"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/button5"
+        app:layout_constraintStart_toEndOf="@+id/buttonFileCopy"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

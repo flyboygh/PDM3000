@@ -24,6 +24,8 @@ public class BleManager {
         return instance;
     }
 
+    private List<ScanResult> scanResultList;
+
     // 检查并静默开启蓝牙
     public boolean checkBluetoothOpened(Context context) {
         BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);//这里与标准蓝牙略有不同
@@ -60,6 +62,11 @@ public class BleManager {
         public void onScanResult(final int callbackType, @NonNull final ScanResult result) {
             // do nothing
             super.onScanResult(callbackType, result);
+            //String deviceName = result.getScanRecord().getDeviceName();
+            //if (deviceName != null && deviceName.length() > 0) {
+            //    scanResultList.add(result);
+            //}
+            //result.de
         }
 
         @Override

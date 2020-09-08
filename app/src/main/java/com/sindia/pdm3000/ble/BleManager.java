@@ -5,14 +5,13 @@ import android.bluetooth.BluetoothAdapter;
 
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
-import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
-import android.bluetooth.le.ScanSettings;
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-//import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.List;
 
 // 低功耗蓝牙管理类（单例）
@@ -24,7 +23,8 @@ public class BleManager {
         return instance;
     }
 
-    private List<ScanResult> scanResultList;
+    public IBleDeviceScan bleDeviceScan;
+    private ArrayList<ScanResult> mScanResultList = new ArrayList<>();
 
     // 检查并静默开启蓝牙
     public boolean checkBluetoothOpened(Context context) {
@@ -38,8 +38,8 @@ public class BleManager {
         return opened;
     }
 
-    // 扫描蓝牙设备
-    public boolean scanBleDevice(Context context) {
+    // 开始扫描蓝牙设备
+    public boolean startScanBleDevice(Context context) {
         BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);//这里与标准蓝牙略有不同
         BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
         BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
@@ -56,17 +56,47 @@ public class BleManager {
         return true;
     }
 
+    // 停止扫描蓝牙设备
+    public boolean stopScanBleDevice(Context context) {
+        BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);//这里与标准蓝牙略有不同
+        BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
+        BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
+        scanner.stopScan(scanCallback);
+        mScanResultList.clear();
+        return true;
+    }
+
     // 蓝牙扫描回调
     private ScanCallback scanCallback = new ScanCallback() {
         @Override
         public void onScanResult(final int callbackType, @NonNull final ScanResult result) {
             // do nothing
             super.onScanResult(callbackType, result);
-            //String deviceName = result.getScanRecord().getDeviceName();
-            //if (deviceName != null && deviceName.length() > 0) {
-            //    scanResultList.add(result);
-            //}
-            //result.de
+            try {
+                if (result.getScanRecord() == null) {
+                    return;
+                }
+                String deviceName = result.getScanRecord().getDeviceName();
+                if (deviceName != null && deviceName.length() > 0) { // 有名设备
+                    int i = mScanResultList.size() - 1;
+                    for (; i >= 0; i--) {
+                        ScanResult sr = mScanResultList.get(i);
+                        if (sr.getScanRecord() == null) {
+                            continue;
+                        }
+                        String dn = sr.getScanRecord().getDeviceName();
+                        if (dn != null && dn.equals(deviceName)) {
+                            break;
+                        }
+                    }
+                    if (i < 0) {
+                        mScanResultList.add(result);
+                        bleDeviceScan.onBleDeviceChanged(mScanResultList);
+                    }
+                }
+            } catch (java.lang.NullPointerException e) {
+                Log.e("onScanResult", "String is null");
+            }
         }
 
         @Override

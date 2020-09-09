@@ -29,7 +29,7 @@ import com.sindia.pdm3000.util.LocationUtil;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, BleDeviceAdapter.Callback {
     // 常量
     private static final String TAG = "MainActivity";
     // 状态相关的
@@ -60,8 +60,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         // 启动后如果没有定位能力就尝试开启
-        //boolean b = LocationUtil::checkLocationPermission();
-        LocationUtil.requestLocationPermission(this);
+        if (!LocationUtil.checkLocationPermission(this)) {
+            LocationUtil.requestLocationPermission(this);
+        }
 
         // 蓝牙工具类
         _BluetoothUtil = new BluetoothUtil();
@@ -77,8 +78,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         _BluetoothUtil.openBlueTooth();
 
         // 设备列表相关
-        mDeviceAdapter = new BleDeviceAdapter();
-        mDeviceAdapter.mContext = this;
+        mDeviceAdapter = new BleDeviceAdapter(this, this);
         mListView = findViewById(R.id.listviewDevices);
         mListView.setOnItemClickListener(this);
         mListView.setAdapter(mDeviceAdapter);
@@ -152,7 +152,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        ScanResult sr = mDeviceAdapter.mScanList.get(i);
+    }
+
+    @Override
+    public void connectClick(int index) {
+        ScanResult sr = mDeviceAdapter.mScanList.get(index);
         //String dn = sr.getScanRecord().getDeviceName();
         BluetoothDevice device = sr.getDevice();
         if (mBleGatt != null) {
@@ -178,6 +182,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 @Override
                 public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
                     super.onConnectionStateChange(gatt, status, newState);
+                    switch (status){
+
+                        case BluetoothGatt.GATT_SUCCESS://0
+                            break;
+                        case BluetoothGatt.GATT_FAILURE://257
+                            break;
+                        case 133:
+                        case 8:
+                        case 22:
+                            break;
+                    }
                 }
 
                 @Override
@@ -225,6 +240,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     super.onMtuChanged(gatt, mtu, status);
                 }
             });
+            //int state = mBleGatt.getConnectionState(device);
+            //if (state == 1) {
+            //}
         }
         mDeviceAdapter.mConnDevice = device;
         mListView.setAdapter(mDeviceAdapter);

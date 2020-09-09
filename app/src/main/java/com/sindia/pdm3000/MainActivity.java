@@ -4,54 +4,91 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.le.ScanResult;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.sindia.pdm3000.adapter.BleDeviceAdapter;
 import com.sindia.pdm3000.ble.IBleDeviceScan;
 import com.sindia.pdm3000.ble.BleManager;
+import com.sindia.pdm3000.util.BluetoothUtil;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
-    private BleDeviceAdapter mDeviceAdapter;
-    private ListView mListView = null;
-    //private ScanResult mConnected = null;
-    private BluetoothGatt mBleGatt = null;
+    // 常量
+    private static final String TAG = "MainActivity";
+    // 状态相关的
     private boolean mScanning = false;
+    // 控件相关的
+    private ListView mListView = null;
+    // 蓝牙相关的
+    private BluetoothUtil _BluetoothUtil = null;
+    private BleDeviceAdapter mDeviceAdapter;
+    private BluetoothGatt mBleGatt = null;
+    private BluetoothStateBroadcastReceive mBluetoothReceive;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        mBluetoothReceive = new BluetoothStateBroadcastReceive();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        intentFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        intentFilter.addAction("android.bluetooth.BluetoothAdapter.STATE_OFF");
+        intentFilter.addAction("android.bluetooth.BluetoothAdapter.STATE_ON");
+        this.registerReceiver(mBluetoothReceive, intentFilter);
 
+        //禁止旋转（在xml写了）
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+/*
         //请求权限
         ActivityCompat.requestPermissions(this,
                 new String[]{
                         Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.WRITE_CONTACTS, Manifest.permission.ACCESS_FINE_LOCATION},
                 0);
+*/
+        // 蓝牙工具类
+        _BluetoothUtil = new BluetoothUtil();
+/*      // 调用工具模块监听蓝牙状态
+        _BluetoothUtil.registerBluetoothReceiver(this);
+        Log.i(TAG, "onCreate: BT State : "+ _BluetoothUtil.getBlueToothState());
+        _BluetoothUtil.colseBlueTooth();
+        Log.i(TAG, "onCreate: BT State : "+ _BluetoothUtil.getBlueToothState());
+        _BluetoothUtil.openBlueTooth();
+        //_BluetoothUtil.gotoSystem(this);
+        Log.i(TAG, "onCreate: BT State : "+ _BluetoothUtil.getBlueToothState());
+*/
+        _BluetoothUtil.openBlueTooth();
 
-        // 检查并开启蓝牙
-        BleManager.getInstance().checkBluetoothOpened(this);
-
+        // 设备列表相关
         mDeviceAdapter = new BleDeviceAdapter();
         mDeviceAdapter.mContext = this;
-
         mListView = findViewById(R.id.listviewDevices);
         mListView.setOnItemClickListener(this);
         mListView.setAdapter(mDeviceAdapter);
 
+        UpdateActivityControls();
+
+        // 设备扫描结果回调
         BleManager.getInstance().bleDeviceScan = new IBleDeviceScan() {
             @Override
             public void onBleDeviceChanged(ArrayList<ScanResult> deviceList) {
@@ -61,22 +98,55 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         };
     }
 
+    // 根据功能状态，更新控件状态
+    private void UpdateActivityControls() {
+        Button btn = findViewById(R.id.buttonScan);
+        if (mScanning) { // 正在扫描蓝牙
+            if (_BluetoothUtil.getBlueToothState()) {
+                btn.setText(R.string.stop_scan);
+            } else {
+                //buttonScanClick(null);
+                if (BleManager.getInstance().stopScanBleDevice(this)) {
+                    mScanning = false;
+                }
+                btn.setText(R.string.open_ble);
+            }
+        } else { // 未在扫描蓝牙
+            if (_BluetoothUtil.getBlueToothState()) {
+                btn.setText(R.string.start_scan);
+            } else {
+                btn.setText(R.string.open_ble);
+            }
+        }
+    }
+
+    // 开启蓝牙/扫描/停止
     public void buttonScanClick(View view) {
         //switch (view.getId()) {
         //    case R.id.buttonScan:
         //    {
+        if (!_BluetoothUtil.getBlueToothState()) { // 蓝牙未开启
+            _BluetoothUtil.openBlueTooth(); // 开启蓝牙
+            return;
+        }
+
         Button btn = findViewById(R.id.buttonScan);
-        if (!mScanning) {
+        if (!mScanning) { // 开启扫描
+            //请求权限
+            ActivityCompat.requestPermissions(this, new String[] {
+                    Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.WRITE_CONTACTS, Manifest.permission.ACCESS_FINE_LOCATION
+                    },0);
             if (BleManager.getInstance().startScanBleDevice(this)) {
                 mScanning = true;
-                btn.setText(R.string.stop_scan);
+                //btn.setText(R.string.stop_scan);
             }
-        } else {
+        } else { // 停止扫描
             if (BleManager.getInstance().stopScanBleDevice(this)) {
                 mScanning = false;
-                btn.setText(R.string.start_scan);
+                //btn.setText(R.string.start_scan);
             }
         }
+        UpdateActivityControls();
         //        break;
         //    }
         //}
@@ -160,5 +230,47 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
         mDeviceAdapter.mConnDevice = device;
         mListView.setAdapter(mDeviceAdapter);
+    }
+
+    // 蓝牙状态接收
+    class BluetoothStateBroadcastReceive extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+            if (action == null || device == null || device.getName() == null) {
+                return;
+            }
+            switch (action) {
+                case BluetoothDevice.ACTION_ACL_CONNECTED:
+                    Toast.makeText(context , "蓝牙设备:" + device.getName() + "已连接", Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, "onReceive: "+"蓝牙设备:" + device.getName() + "已连接");
+                    break;
+                case BluetoothDevice.ACTION_ACL_DISCONNECTED:
+                    Toast.makeText(context , "蓝牙设备:" + device.getName() + "已断开", Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, "onReceive: "+"蓝牙设备:" + device.getName() + "已断开");
+                    break;
+                case BluetoothAdapter.ACTION_STATE_CHANGED:
+                    int blueState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
+                    switch (blueState){
+                        case BluetoothAdapter.STATE_OFF:
+                            Toast.makeText(context , "蓝牙已关闭", Toast.LENGTH_SHORT).show();
+                            Log.i(TAG, "onReceive: "+"蓝牙已关闭:" );
+                            UpdateActivityControls();
+                            break;
+                        case BluetoothAdapter.STATE_ON:
+                            Toast.makeText(context , "蓝牙已开启"  , Toast.LENGTH_SHORT).show();
+                            Log.i(TAG, "onReceive: "+"蓝牙已开启:");
+                            UpdateActivityControls();
+                            break;
+                        case BluetoothAdapter.STATE_TURNING_ON:
+                            break;
+                        case BluetoothAdapter.STATE_TURNING_OFF:
+                            break;
+                    }
+                    break;
+            }
+        }
     }
 }

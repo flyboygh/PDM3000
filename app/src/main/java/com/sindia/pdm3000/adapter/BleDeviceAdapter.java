@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.sindia.pdm3000.R;
@@ -38,10 +39,13 @@ public class BleDeviceAdapter extends BaseAdapter {
         view = LayoutInflater.from(mContext).inflate(R.layout.ble_device_cell, viewGroup,false);
         TextView txt_aName = view.findViewById(R.id.textViewDeviceName);
         String s = mScanList.get(i).getScanRecord().getDeviceName();
-        if (mConnDevice != null && mConnDevice.equals(mScanList.get(i).getDevice())) {
-            s += "  (CONNECTED)";
-        }
         txt_aName.setText(s);
+        Button btnConnect = view.findViewById(R.id.buttonConnect);
+        if (mConnDevice != null && mConnDevice.equals(mScanList.get(i).getDevice())) {
+            btnConnect.setText(R.string.disconn);
+        } else {
+            btnConnect.setText(R.string.connect);
+        }
         return view;
     }
 }

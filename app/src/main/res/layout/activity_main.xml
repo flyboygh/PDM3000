@@ -7,7 +7,7 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/textViewDeviceList"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
         android:layout_marginTop="32dp"
@@ -62,7 +62,7 @@
         android:layout_marginTop="22dp"
         android:onClick="buttonScanClick"
         android:text="@string/start_scan"
-        app:layout_constraintStart_toEndOf="@+id/textView2"
+        app:layout_constraintStart_toEndOf="@+id/textViewDeviceList"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ListView
@@ -75,6 +75,6 @@
         android:background="#D8DCB4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewDeviceList" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -61,7 +61,9 @@ public class BleManager {
         BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);//这里与标准蓝牙略有不同
         BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
         BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
-        scanner.stopScan(scanCallback);
+        if (scanner != null) { // 当从设置里关闭蓝牙，会到这里
+            scanner.stopScan(scanCallback);
+        }
         mScanResultList.clear();
         bleDeviceScan.onBleDeviceChanged(mScanResultList);
         return true;

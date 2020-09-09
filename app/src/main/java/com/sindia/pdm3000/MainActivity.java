@@ -1,9 +1,7 @@
 package com.sindia.pdm3000;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
-import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -27,6 +25,7 @@ import com.sindia.pdm3000.adapter.BleDeviceAdapter;
 import com.sindia.pdm3000.ble.IBleDeviceScan;
 import com.sindia.pdm3000.ble.BleManager;
 import com.sindia.pdm3000.util.BluetoothUtil;
+import com.sindia.pdm3000.util.LocationUtil;
 
 import java.util.ArrayList;
 
@@ -59,13 +58,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         //禁止旋转（在xml写了）
         //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-/*
-        //请求权限
-        ActivityCompat.requestPermissions(this,
-                new String[]{
-                        Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.WRITE_CONTACTS, Manifest.permission.ACCESS_FINE_LOCATION},
-                0);
-*/
+
+        // 启动后如果没有定位能力就尝试开启
+        //boolean b = LocationUtil::checkLocationPermission();
+        LocationUtil.requestLocationPermission(this);
+
         // 蓝牙工具类
         _BluetoothUtil = new BluetoothUtil();
 /*      // 调用工具模块监听蓝牙状态
@@ -132,10 +129,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         Button btn = findViewById(R.id.buttonScan);
         if (!mScanning) { // 开启扫描
-            //请求权限
-            ActivityCompat.requestPermissions(this, new String[] {
-                    Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.WRITE_CONTACTS, Manifest.permission.ACCESS_FINE_LOCATION
-                    },0);
+            //请求定位权限
+            if (!LocationUtil.checkLocationPermission(this)) {
+                LocationUtil.requestLocationPermission(this);
+                return;
+            }
             if (BleManager.getInstance().startScanBleDevice(this)) {
                 mScanning = true;
                 //btn.setText(R.string.stop_scan);
@@ -238,30 +236,37 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-            if (action == null || device == null || device.getName() == null) {
+            if (action == null) {
                 return;
             }
             switch (action) {
-                case BluetoothDevice.ACTION_ACL_CONNECTED:
-                    Toast.makeText(context , "蓝牙设备:" + device.getName() + "已连接", Toast.LENGTH_SHORT).show();
-                    Log.i(TAG, "onReceive: "+"蓝牙设备:" + device.getName() + "已连接");
+                case BluetoothDevice.ACTION_ACL_CONNECTED: {
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    if (device != null && device.getName() != null) {
+                        Toast.makeText(context, "蓝牙设备:" + device.getName() + "已连接", Toast.LENGTH_SHORT).show();
+                        Log.i(TAG, "onReceive: " + "蓝牙设备:" + device.getName() + "已连接");
+                    }
                     break;
-                case BluetoothDevice.ACTION_ACL_DISCONNECTED:
-                    Toast.makeText(context , "蓝牙设备:" + device.getName() + "已断开", Toast.LENGTH_SHORT).show();
-                    Log.i(TAG, "onReceive: "+"蓝牙设备:" + device.getName() + "已断开");
+                }
+                case BluetoothDevice.ACTION_ACL_DISCONNECTED: {
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    if (device != null && device.getName() != null) {
+                        Toast.makeText(context, "蓝牙设备:" + device.getName() + "已断开", Toast.LENGTH_SHORT).show();
+                        Log.i(TAG, "onReceive: " + "蓝牙设备:" + device.getName() + "已断开");
+                    }
                     break;
-                case BluetoothAdapter.ACTION_STATE_CHANGED:
+                }
+                case BluetoothAdapter.ACTION_STATE_CHANGED: {
                     int blueState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
-                    switch (blueState){
+                    switch (blueState) {
                         case BluetoothAdapter.STATE_OFF:
-                            Toast.makeText(context , "蓝牙已关闭", Toast.LENGTH_SHORT).show();
-                            Log.i(TAG, "onReceive: "+"蓝牙已关闭:" );
+                            Toast.makeText(context, "蓝牙已关闭", Toast.LENGTH_SHORT).show();
+                            Log.i(TAG, "onReceive: " + "蓝牙已关闭:");
                             UpdateActivityControls();
                             break;
                         case BluetoothAdapter.STATE_ON:
-                            Toast.makeText(context , "蓝牙已开启"  , Toast.LENGTH_SHORT).show();
-                            Log.i(TAG, "onReceive: "+"蓝牙已开启:");
+                            Toast.makeText(context, "蓝牙已开启", Toast.LENGTH_SHORT).show();
+                            Log.i(TAG, "onReceive: " + "蓝牙已开启:");
                             UpdateActivityControls();
                             break;
                         case BluetoothAdapter.STATE_TURNING_ON:
@@ -270,6 +275,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             break;
                     }
                     break;
+                }
             }
         }
     }

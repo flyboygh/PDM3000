@@ -116,7 +116,27 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mWifiListView = findViewById(R.id.listviewWifis);
         mWifiListView.setOnItemClickListener(this);
         mWifiListView.setAdapter(mWifiAdapter);
+/*
+        //Check for permissions
+        int n1 = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+        int n2 = ContextCompat.checkSelfPermission(this, Manifest.permission.CHANGE_WIFI_STATE);
+        if ((n1 != PackageManager.PERMISSION_GRANTED) || (n2 != PackageManager.PERMISSION_GRANTED))
+        {
+            Log.d(TAG, "Requesting permissions");
 
+            //Request permission
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_WIFI_STATE,
+                            Manifest.permission.CHANGE_WIFI_STATE,
+                            Manifest.permission.ACCESS_NETWORK_STATE},
+                    123);
+        }
+        else
+            Log.d(TAG, "Permissions already granted");
+        int n = wiFiAdmin.checkState();
+*/
         wiFiAdmin = new WifiAdmin(this);
         wiFiAdmin.openWifi();
 

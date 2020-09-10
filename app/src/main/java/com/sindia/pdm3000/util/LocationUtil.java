@@ -11,7 +11,6 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
-import android.os.Bundle;
 import android.provider.Settings;
 
 import androidx.core.app.ActivityCompat;
@@ -67,6 +66,30 @@ public class LocationUtil {
             return AppOpsManagerCompat.MODE_IGNORED != checkResult && AppOpsManagerCompat.MODE_IGNORED != checkResult2;
         }
     }
+    /*
+    public static boolean checkLocationPermission2(Activity activity) {
+        //Check for permissions
+        int n1 = ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION);
+        int n2 = ContextCompat.checkSelfPermission(activity, Manifest.permission.CHANGE_WIFI_STATE);
+        if ((n1 != PackageManager.PERMISSION_GRANTED) || (n2 != PackageManager.PERMISSION_GRANTED))
+        {
+            return false;
+            //Log.d(TAG, "Requesting permissions");
+
+            //Request permission
+            / *ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_WIFI_STATE,
+                            Manifest.permission.CHANGE_WIFI_STATE,
+                            Manifest.permission.ACCESS_NETWORK_STATE},
+                    123);* /
+        }
+        else {
+            //Log.d(TAG, "Permissions already granted");
+        }
+        return true;
+    }*/
 /*
     // 获取应用详情页面intent（如果找不到要跳转的界面，也可以先把用户引导到系统设置页面）
     private Intent getAppDetailSettingIntent() {

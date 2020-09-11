@@ -2,14 +2,17 @@ package com.sindia.pdm3000.adapter;
 
 import android.net.wifi.ScanResult;
 import android.content.Context;
+import android.net.wifi.WifiInfo;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.sindia.pdm3000.R;
+import com.sindia.pdm3000.util.WifiAdmin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +56,15 @@ public class WifiAdapter extends BaseAdapter implements View.OnClickListener {
             txt_aName.setText(s);
         } else {
             Log.d("", "");
+        }
+
+        Button btnConnect = view.findViewById(R.id.buttonConnect);
+        WifiInfo wifiInfo = WifiAdmin.getConnectWifiInfo(mContext);// getInstance().getWifiManager().getConnectionInfo();
+        String curBSSID = ( wifiInfo == null ? "" : wifiInfo.getBSSID() );//  WifiAdmin.getInstance().getWifiManager().getConnectionInfo().getBSSID();// getBSSID();
+        if (curBSSID.equals(s_result.BSSID)) {
+            btnConnect.setText(R.string.disconn);
+        } else {
+            btnConnect.setText(R.string.connect);
         }
         /*Button btnConnect = view.findViewById(R.id.buttonConnect);
         if (mConnDevice != null) {

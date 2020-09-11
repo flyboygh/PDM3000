@@ -13,12 +13,13 @@ import android.widget.TextView;
 import com.sindia.pdm3000.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BleDeviceAdapter extends BaseAdapter implements View.OnClickListener {
     private Context mContext = null;
     private Callback mCallback = null;
     public BluetoothDevice mConnDevice = null;
-    public ArrayList<ScanResult> mScanList = new ArrayList<>();
+    public List<ScanResult> mScanList = new ArrayList<>();
 
     public BleDeviceAdapter(Context context, Callback callback) {
         mContext = context;

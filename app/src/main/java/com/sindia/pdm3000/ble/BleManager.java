@@ -24,7 +24,7 @@ public class BleManager {
     }
 
     public IBleDeviceScan bleDeviceScan;
-    private ArrayList<ScanResult> mScanResultList = new ArrayList<>();
+    private List<ScanResult> mScanResultList = new ArrayList<>();
 
     // 检查并静默开启蓝牙
     public boolean checkBluetoothOpened(Context context) {
@@ -83,11 +83,11 @@ public class BleManager {
                 if (deviceName != null && deviceName.length() > 0) { // 有名设备
                     int i = mScanResultList.size() - 1;
                     for (; i >= 0; i--) {
-                        ScanResult sr = mScanResultList.get(i);
-                        if (sr.getScanRecord() == null) {
+                        ScanResult s_result = mScanResultList.get(i);
+                        if (s_result.getScanRecord() == null) {
                             continue;
                         }
-                        String dn = sr.getScanRecord().getDeviceName();
+                        String dn = s_result.getScanRecord().getDeviceName();
                         if (dn != null && dn.equals(deviceName)) {
                             break;
                         }

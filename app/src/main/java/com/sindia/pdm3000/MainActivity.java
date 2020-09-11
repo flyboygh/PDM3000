@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // 设备扫描结果回调
         BleManager.getInstance().bleDeviceScan = new IBleDeviceScan() {
             @Override
-            public void onBleDeviceChanged(ArrayList<ScanResult> deviceList) {
+            public void onBleDeviceChanged(List<ScanResult> deviceList) {
                 mDeviceAdapter.mScanList = deviceList;
                 mDeviceListView.setAdapter(mDeviceAdapter);
             }
@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     Log.d("wifi", listSSID0[i] + "//" + listBSSID0[i] + "//" + listLevel0[i]);
                 }
                 Log.d("wifi", "=======================");
-                wifiInfo = wiFiAdmin.GetWifiManager().getConnectionInfo();//  mWifiManager.getConnectionInfo();
+                wifiInfo = WifiAdmin.getConnectWifiInfo(MainActivity.this);// wiFiAdmin.getWifiManager().getConnectionInfo();//  mWifiManager.getConnectionInfo();
                 //获得信号强度值
                 level = wifiInfo.getRssi();
                 macAddress = wifiInfo.getBSSID();
@@ -303,9 +303,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void connectClick(int index) {
-        ScanResult sr = mDeviceAdapter.mScanList.get(index);
-        //String dn = sr.getScanRecord().getDeviceName();
-        BluetoothDevice device = sr.getDevice();
+        ScanResult s_result = mDeviceAdapter.mScanList.get(index);
+        //String dn = s_result.getScanRecord().getDeviceName();
+        BluetoothDevice device = s_result.getDevice();
         if (mBleGatt != null) {
             if (mBleGatt.getDevice().equals(device)) {
                 device = null;

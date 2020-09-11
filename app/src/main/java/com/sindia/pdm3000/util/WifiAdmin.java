@@ -309,8 +309,20 @@ public class WifiAdmin {
         }
         return wifiId;
     }
-
-    public WifiManager GetWifiManager() {
+/*
+    public WifiManager getWifiManager() {
         return mWifiManager;
+    }
+*/
+    // 一些静态接口方法
+    public static WifiInfo getConnectWifiInfo(Context context) {
+        // 获得WifiManager对象
+        WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+        // 取得WifiInfo对象
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        //if (wifiInfo == null) {
+        //    wifiInfo = new WifiInfo();
+        //}
+        return wifiInfo;
     }
 }

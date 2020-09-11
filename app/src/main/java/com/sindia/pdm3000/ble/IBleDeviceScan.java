@@ -2,8 +2,8 @@ package com.sindia.pdm3000.ble;
 
 import android.bluetooth.le.ScanResult;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface IBleDeviceScan {
-    void onBleDeviceChanged(ArrayList<ScanResult> deviceList);
+    void onBleDeviceChanged(List<ScanResult> deviceList);
 }

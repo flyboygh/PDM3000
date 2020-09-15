@@ -16,6 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BleDeviceAdapter extends BaseAdapter implements View.OnClickListener {
+    public interface Callback {
+        public void activateBleClick(ScanResult s_result);//int index);
+    }
+
     private Context mContext = null;
     private Callback mCallback = null;
     public BluetoothDevice mConnDevice = null;
@@ -24,10 +28,6 @@ public class BleDeviceAdapter extends BaseAdapter implements View.OnClickListene
     public BleDeviceAdapter(Context context, Callback callback) {
         mContext = context;
         mCallback = callback;
-    }
-
-    public interface Callback {
-        public void connectClick(int index);
     }
 
     @Override
@@ -51,26 +51,27 @@ public class BleDeviceAdapter extends BaseAdapter implements View.OnClickListene
         TextView txt_aName = view.findViewById(R.id.textViewDeviceName);
         String s = mScanList.get(i).getScanRecord().getDeviceName();
         txt_aName.setText(s);
-        Button btnConnect = view.findViewById(R.id.buttonConnect);
-        if (mConnDevice != null) {
+        Button btnActivate = view.findViewById(R.id.buttonActivate);
+        /*if (mConnDevice != null) {
             if (mConnDevice.equals(mScanList.get(i).getDevice())) {
-                btnConnect.setText(R.string.disconn);
-                btnConnect.setVisibility(View.VISIBLE);
+                btnActivate.setText(R.string.disconn);
+                btnActivate.setVisibility(View.VISIBLE);
             } else {
-                btnConnect.setVisibility(View.INVISIBLE);
+                btnActivate.setVisibility(View.INVISIBLE);
             }
         } else {
-            btnConnect.setText(R.string.connect);
-            btnConnect.setVisibility(View.VISIBLE);
-        }
-        btnConnect.setOnClickListener(this);
-        btnConnect.setTag(i);
+            btnActivate.setText(R.string.activate);
+            btnActivate.setVisibility(View.VISIBLE);
+        }*/
+        btnActivate.setOnClickListener(this);
+        btnActivate.setTag(i);
         return view;
     }
 
     @Override
     public void onClick(View view) {
         int index = (int)view.getTag();
-        mCallback.connectClick(index);
+        ScanResult s_result = mScanList.get(index);
+        mCallback.activateBleClick(s_result);
     }
 }

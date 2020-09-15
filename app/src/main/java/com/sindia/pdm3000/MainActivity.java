@@ -301,20 +301,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
     }
 
+    // 【激活】蓝牙设备按钮点击
     @Override
-    public void connectClick(int index) {
-        ScanResult s_result = mDeviceAdapter.mScanList.get(index);
+    public void activateBleClick(ScanResult s_result) {
+        //ScanResult s_result = mDeviceAdapter.mScanList.get(index);
         //String dn = s_result.getScanRecord().getDeviceName();
         BluetoothDevice device = s_result.getDevice();
-        if (mBleGatt != null) {
-            if (mBleGatt.getDevice().equals(device)) {
-                device = null;
-            }
-            mBleGatt.disconnect();
+        if (mBleGatt != null) { // 上次已连接
+            // 先取得当前已连接设备的状态
+            //int state = mBleGatt.getConnectionState(device); // 会崩溃
+            //if (state == 1) {
+            //}
+            //if (mBleGatt.getDevice().equals(device)) { // 现在只有一个【激活】操作，所以先不用这个
+            //    device = null;
+            //}
+            mBleGatt.disconnect(); // 这个会稍后触发onConnectionStateChange(state:1)
             mBleGatt = null;
             mDeviceAdapter.mConnDevice = null;
         }
-        if (device != null) {
+        if (device != null) { // 现在这个一定成立
+            // 连接蓝牙设备
             mBleGatt = device.connectGatt(this, false, new BluetoothGattCallback() {
                 @Override
                 public void onPhyUpdate(BluetoothGatt gatt, int txPhy, int rxPhy, int status) {
@@ -328,6 +334,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 @Override
                 public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+                    // newState-2：连接成功；newState-0：连接断开
                     super.onConnectionStateChange(gatt, status, newState);
                     switch (status){
 
@@ -387,12 +394,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     super.onMtuChanged(gatt, mtu, status);
                 }
             });
-            //int state = mBleGatt.getConnectionState(device);
-            //if (state == 1) {
-            //}
         }
         mDeviceAdapter.mConnDevice = device;
         mDeviceListView.setAdapter(mDeviceAdapter);
+    }
+
+    // 【连接】wifi按钮点击
+    @Override
+    public void connectWifiClick(int index) {
+
     }
 
     // 蓝牙状态接收

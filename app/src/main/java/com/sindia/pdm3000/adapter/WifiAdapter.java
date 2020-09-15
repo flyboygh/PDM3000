@@ -17,7 +17,12 @@ import com.sindia.pdm3000.util.WifiAdmin;
 import java.util.ArrayList;
 import java.util.List;
 
+// 无线网记录适配类
 public class WifiAdapter extends BaseAdapter implements View.OnClickListener {
+    public interface Callback {
+        public void connectWifiClick(int index);
+    }
+
     private Context mContext = null;
     private Callback mCallback = null;
     public List<ScanResult> mScanList = new ArrayList<>();
@@ -25,10 +30,6 @@ public class WifiAdapter extends BaseAdapter implements View.OnClickListener {
     public WifiAdapter(Context context, Callback callback) {
         mContext = context;
         mCallback = callback;
-    }
-
-    public interface Callback {
-        public void connectClick(int index);
     }
 
     @Override

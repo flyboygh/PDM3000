@@ -28,8 +28,8 @@ public class BleManager {
 
     // 检查并静默开启蓝牙
     public boolean checkBluetoothOpened(Context context) {
-        BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);//这里与标准蓝牙略有不同
-        BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
+        //BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);//这里与标准蓝牙略有不同
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();// bluetoothManager.getAdapter();
         /*隐式打开蓝牙*/
         boolean opened = true;
         if (!bluetoothAdapter.isEnabled()) {
@@ -40,8 +40,8 @@ public class BleManager {
 
     // 开始扫描蓝牙设备
     public boolean startScanBleDevice(Context context) {
-        BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);//这里与标准蓝牙略有不同
-        BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
+        //BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);//这里与标准蓝牙略有不同
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();// bluetoothManager.getAdapter();
         BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
         scanner.startScan(scanCallback);
 /*
@@ -58,8 +58,8 @@ public class BleManager {
 
     // 停止扫描蓝牙设备
     public boolean stopScanBleDevice(Context context) {
-        BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);//这里与标准蓝牙略有不同
-        BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
+        //BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);//这里与标准蓝牙略有不同
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();// bluetoothManager.getAdapter();
         BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
         if (scanner != null) { // 当从设置里关闭蓝牙，会到这里
             scanner.stopScan(scanCallback);

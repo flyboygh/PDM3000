@@ -17,7 +17,7 @@ import java.util.List;
 
 public class BleDeviceAdapter extends BaseAdapter implements View.OnClickListener {
     public interface Callback {
-        public void activateBleClick(ScanResult s_result);//int index);
+        public void activateBleClick(BluetoothDevice device);//int index);
     }
 
     private Context mContext = null;
@@ -72,6 +72,6 @@ public class BleDeviceAdapter extends BaseAdapter implements View.OnClickListene
     public void onClick(View view) {
         int index = (int)view.getTag();
         ScanResult s_result = mScanList.get(index);
-        mCallback.activateBleClick(s_result);
+        mCallback.activateBleClick(s_result.getDevice());
     }
 }

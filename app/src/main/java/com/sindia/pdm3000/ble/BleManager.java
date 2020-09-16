@@ -1,6 +1,5 @@
 package com.sindia.pdm3000.ble;
 
-import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothAdapter;
 
 import android.bluetooth.le.BluetoothLeScanner;
@@ -23,20 +22,14 @@ public class BleManager {
         return instance;
     }
 
-    public IBleDeviceScan bleDeviceScan;
-    private List<ScanResult> mScanResultList = new ArrayList<>();
+    // =================================== 下面都是蓝牙扫描相关的 ==================================
 
-    // 检查并静默开启蓝牙
-    public boolean checkBluetoothOpened(Context context) {
-        //BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);//这里与标准蓝牙略有不同
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();// bluetoothManager.getAdapter();
-        /*隐式打开蓝牙*/
-        boolean opened = true;
-        if (!bluetoothAdapter.isEnabled()) {
-            opened = bluetoothAdapter.enable();
-        }
-        return opened;
+    public interface BleScanCallback {
+        void onBleDeviceChanged(List<ScanResult> deviceList);
     }
+
+    public BleScanCallback mBleScanCallback;
+    private List<ScanResult> mScanResultList = new ArrayList<>();
 
     // 开始扫描蓝牙设备
     public boolean startScanBleDevice(Context context) {
@@ -65,7 +58,7 @@ public class BleManager {
             scanner.stopScan(scanCallback);
         }
         mScanResultList.clear();
-        bleDeviceScan.onBleDeviceChanged(mScanResultList);
+        mBleScanCallback.onBleDeviceChanged(mScanResultList);
         return true;
     }
 
@@ -94,7 +87,7 @@ public class BleManager {
                     }
                     if (i < 0) {
                         mScanResultList.add(result);
-                        bleDeviceScan.onBleDeviceChanged(mScanResultList);
+                        mBleScanCallback.onBleDeviceChanged(mScanResultList);
                     }
                 }
             } catch (java.lang.NullPointerException e) {
@@ -114,4 +107,16 @@ public class BleManager {
             super.onScanFailed(errorCode);
         }
     };
+
+    // 检查并静默开启蓝牙（已经使用BluetoothUtil里的方法了）
+    /*public boolean checkBluetoothOpened(Context context) {
+        //BluetoothManag bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);//这里与标准蓝牙略有不同
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();// bluetoothManager.getAdapter();
+        // 隐式打开蓝牙
+        boolean opened = true;
+        if (!bluetoothAdapter.isEnabled()) {
+            opened = bluetoothAdapter.enable();
+        }
+        return opened;
+    }*/
 }

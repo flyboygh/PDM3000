@@ -11,7 +11,6 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
-import android.bluetooth.le.ScanResult;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -29,7 +28,6 @@ import android.widget.Toast;
 
 import com.sindia.pdm3000.adapter.BleDeviceAdapter;
 import com.sindia.pdm3000.adapter.WifiAdapter;
-import com.sindia.pdm3000.ble.IBleDeviceScan;
 import com.sindia.pdm3000.ble.BleManager;
 import com.sindia.pdm3000.util.BluetoothUtil;
 import com.sindia.pdm3000.util.LocationUtil;
@@ -110,9 +108,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mDeviceListView.setAdapter(mDeviceAdapter);
 
         // 设备扫描结果回调
-        BleManager.getInstance().bleDeviceScan = new IBleDeviceScan() {
+        BleManager.getInstance().mBleScanCallback = new BleManager.BleScanCallback() {
             @Override
-            public void onBleDeviceChanged(List<ScanResult> deviceList) {
+            public void onBleDeviceChanged(List<android.bluetooth.le.ScanResult> deviceList) {
                 mDeviceAdapter.mScanList = deviceList;
                 mDeviceListView.setAdapter(mDeviceAdapter);
             }
@@ -310,10 +308,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     // 【激活】蓝牙设备按钮点击
     @Override
-    public void activateBleClick(ScanResult s_result) {
+    public void activateBleClick(BluetoothDevice device) {
         //ScanResult s_result = mDeviceAdapter.mScanList.get(index);
-        //String dn = s_result.getScanRecord().getDeviceName();
-        BluetoothDevice device = s_result.getDevice();
         if (mBleGatt != null) { // 上次已连接
             // 先取得当前已连接设备的状态
             //int state = mBleGatt.getConnectionState(device); // 会崩溃

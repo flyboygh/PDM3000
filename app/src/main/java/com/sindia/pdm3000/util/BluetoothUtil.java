@@ -10,8 +10,13 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class BluetoothUtil {
+    // 蓝牙状态变化回调
+    public interface BluetoothStateCallback {
+        public void onBluetoothOpened(boolean open);
+    }
+    public BluetoothStateCallback mBluetoothCallback;
 
-    private static final String TAG = "Main";
+    private static final String TAG = "BluetoothUtil"; //Main";
 
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothStateBroadcastReceive mReceive;
@@ -85,10 +90,12 @@ public class BluetoothUtil {
                         case BluetoothAdapter.STATE_OFF:
                             Toast.makeText(context , "蓝牙已关闭", Toast.LENGTH_SHORT).show();
                             Log.i(TAG, "onReceive: "+"蓝牙已关闭:" );
+                            mBluetoothCallback.onBluetoothOpened(false);
                             break;
                         case BluetoothAdapter.STATE_ON:
                             Toast.makeText(context , "蓝牙已开启"  , Toast.LENGTH_SHORT).show();
                             Log.i(TAG, "onReceive: "+"蓝牙已开启:");
+                            mBluetoothCallback.onBluetoothOpened(true);
                             break;
                     }
                     break;

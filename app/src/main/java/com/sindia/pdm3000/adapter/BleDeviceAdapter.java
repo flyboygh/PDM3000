@@ -22,7 +22,7 @@ public class BleDeviceAdapter extends BaseAdapter implements View.OnClickListene
 
     private Context mContext = null;
     private Callback mCallback = null;
-    public BluetoothDevice mConnDevice = null;
+    //public BluetoothDevice mConnDevice = null; // 当前连接的蓝牙设备
     public List<ScanResult> mScanList = new ArrayList<>();
 
     public BleDeviceAdapter(Context context, Callback callback) {

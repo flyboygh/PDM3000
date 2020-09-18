@@ -309,6 +309,9 @@ public class WifiAdmin {
         }
         return wifiId;
     }
+
+    //////////////////////////////// 下面是自定义的 ////////////////////////////////
+
 /*
     public WifiManager getWifiManager() {
         return mWifiManager;
@@ -320,9 +323,112 @@ public class WifiAdmin {
         WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
         // 取得WifiInfo对象
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        if (wifiInfo == null || wifiInfo.getBSSID() == null) {
+            return null;
+        }
         //if (wifiInfo == null) {
         //    wifiInfo = new WifiInfo();
         //}
         return wifiInfo;
+    }
+
+    // 扫描和回调
+    //public interface WifiScanCallback {
+    //}
+    //public WifiScanCallback mWifiScanCallback = null;
+
+    // 提返回的一些状态
+    //private boolean mWifiChanged = false;
+    //private WifiInfo mLastConnWifi = null;
+
+    // 扫描无线，返回和上次的比是否发生了变化
+    public boolean checkScanWifis(Context context) {
+        // 记录上次的信息
+        int oldWifiCount = 0;
+        final List<ScanResult> oldWifiList = mWifiList;
+        if (oldWifiList != null) {
+            oldWifiCount = oldWifiList.size();
+        }
+
+        // 扫描WIFI
+        startScan();
+
+        // 对结果做处理
+        /*List<ScanResult> list = new ArrayList<>();
+        for (int i = 0; i < mWifiList.size(); i++) {
+            ScanResult s_result = mWifiList.get(i);
+            if (s_result.BSSID != null) {
+                list.add(s_result);
+            }
+        }*/
+
+        // 取得当前连接wifi信息
+        WifiInfo connWifi = getConnectWifiInfo(context);
+        //if (connWifi == null || connWifi.getBSSID() == null) {
+        //    connWifi = null;
+        //}
+        if (mWifiInfo == null || mWifiInfo.getBSSID() == null) {
+            mWifiInfo = null;
+        }
+
+        // 比较连接是否相同
+        if ((connWifi == null && mWifiInfo == null) || (connWifi != null && mWifiInfo != null && connWifi.getBSSID().equals(mWifiInfo.getBSSID()))) {
+            // 和上次的结果比较
+            if (mWifiList.size() == oldWifiCount) { // 数量相同
+                // 比较顺序
+                int i = 0, count = mWifiList.size();
+                for (i = 0; i < count; i++) {
+                    ScanResult sr1 = mWifiList.get(i);
+                    ScanResult sr2 = oldWifiList.get(i);
+                    if (!sr1.BSSID.equals(sr2.BSSID)) {
+                        break;
+                    }
+                }
+                if (i == count) { // 顺序也相同
+                    return false;
+                }
+            }
+        }
+        mWifiInfo = connWifi;
+        return true;
+        /*
+        List<android.net.wifi.ScanResult> listb = mWifiList;//mWifiManager.getScanResults();
+        Log.d("wifi","listb"+listb);
+        Log.d("wifi","listb.size()"+listb.size());
+        //数组初始化要注意
+        String[] listSSID = new String[listb.size()];
+        String[] listBSSID = new String[listb.size()];
+        int[] listLevel = new int[listb.size()];
+        if (listb != null) {
+            for (int i = 0; i < listb.size(); i++) {
+                android.net.wifi.ScanResult scanResult = listb.get(i);
+                listSSID[i] = scanResult.SSID;
+                listBSSID[i] = scanResult.BSSID;
+                listLevel[i] = scanResult.level;
+            }
+        }
+        String[] listSSID0 = new String[listb.size()];
+        String[] listBSSID0 = new String[listb.size()];
+        int[] listLevel0 = new int[listb.size()];
+        if (listb == null) {
+            listSSID0[0] = "NoWiFi";
+            listBSSID0[0] = "NoWiFi";
+            listLevel[0] = -200; //-200默认没有wifi
+        } else {
+            listSSID0 = listSSID;
+            listBSSID0 = listBSSID;
+            listLevel0 = listLevel;
+        }
+        for (int i = 0; i < listb.size(); i++) {
+            Log.d("wifi", listSSID0[i] + "//" + listBSSID0[i] + "//" + listLevel0[i]);
+        }
+        Log.d("wifi", "=======================");
+        wifiInfo = WifiAdmin.getConnectWifiInfo(MainActivity.this);// wiFiAdmin.getWifiManager().getConnectionInfo();//  mWifiManager.getConnectionInfo();
+        //获得信号强度值
+        level = wifiInfo.getRssi();
+        macAddress = wifiInfo.getBSSID();
+        Message msg = new Message();
+        handler.sendMessage(msg);
+         */
     }
 }

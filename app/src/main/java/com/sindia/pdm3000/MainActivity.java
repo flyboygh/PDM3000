@@ -12,6 +12,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sindia.pdm3000.adapter.BleDeviceAdapter;
@@ -28,8 +29,14 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity implements BluetoothUtil.BluetoothStateCallback, BleDeviceAdapter.Callback, WifiAdapter.Callback { //AdapterView.OnItemClickListener,
     // 常量
     private static final String TAG = "MainActivity";
+    private static final int kTotalBleScanS = 10;
+    // 定时器
+    private static final int kMainTimerID = 101;
+    private static final long kMainTimerDelay = 1000;
+    private Handler mTimerHandler;
     // 状态相关的
-    private boolean mScanning = false;
+    private boolean mBleScanning = false; // 低功耗是否正在扫描
+    private int mBleScanRemainS = 0; // 低功耗扫描剩余秒数
     // 蓝牙相关的
     private ListView mDeviceListView = null;
     private BleDeviceAdapter mDeviceAdapter;
@@ -37,19 +44,21 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
     // 无线网相关的
     private ListView mWifiListView = null;
     private WifiAdapter mWifiAdapter;
-    private WifiAdmin wiFiAdmin;
-    private List<android.net.wifi.ScanResult> mWifiList;
+    private WifiAdmin mWiFiAdmin;
+    //private List<android.net.wifi.ScanResult> mWifiList;
 
     //private WifiManager mWifiManager = null;
-    private WifiInfo wifiInfo = null;       //获得的Wifi信息
-    private Handler handler;
-    private int level;
-    private String macAddress;
+    //private WifiInfo wifiInfo = null;       //获得的Wifi信息
+    //private Handler handler;
+    //private int level;
+    //private String macAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        setTitle(R.string.app_title);
 
         //禁止旋转（在xml写了）
         //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -72,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
         Log.i(TAG, "onCreate: BT State : "+ _BluetoothUtil.getBlueToothState());
         //_BluetoothUtil.colseBlueTooth();
         //Log.i(TAG, "onCreate: BT State : "+ _BluetoothUtil.getBlueToothState());
-        _BluetoothUtil.openBlueTooth();
+        //_BluetoothUtil.openBlueTooth();
         //_BluetoothUtil.gotoSystem(this);
         //Log.i(TAG, "onCreate: BT State : "+ _BluetoothUtil.getBlueToothState());
 
@@ -117,8 +126,8 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
             Log.d(TAG, "Permissions already granted");
         int n = wiFiAdmin.checkState();
 */
-        wiFiAdmin = new WifiAdmin(this);
-        wiFiAdmin.openWifi();
+        mWiFiAdmin = new WifiAdmin(this);
+        mWiFiAdmin.openWifi();
 
         // 判断wifi是否开启
         /*mWifiManager = (WifiManager)getApplicationContext().getSystemService(WIFI_SERVICE);
@@ -142,7 +151,8 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
                         REQUEST_CODE_ACCESS_COARSE_LOCATION);
             }
         }*/
-// 使用定时器,每隔5秒获得一次信号强度值
+        /*
+        // 使用定时器,每隔5秒获得一次信号强度值
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -200,10 +210,45 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
                 mWifiAdapter.mScanList = mWifiList;
                 mWifiListView.setAdapter(mWifiAdapter);
             }
-        };
+        };*/
 
         // 更新控件显赫
         UpdateActivityControls();
+
+        // 程序启动后自动开始扫描蓝牙
+        buttonScanClick(null);
+
+        // 创建主定时器
+        mTimerHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                if (msg.what == kMainTimerID) {
+                    onMainTimerMessage();
+                    removeMessages(msg.what); // 确保每秒执行一次
+                    sendEmptyMessageDelayed(msg.what, kMainTimerDelay);
+                }
+            }
+        };
+        mTimerHandler.sendEmptyMessage(kMainTimerID);
+    }
+
+    // 主定时器消息
+    private void onMainTimerMessage() {
+        // 蓝牙相关的
+        if (mBleScanning) {
+            mBleScanRemainS--;
+            if (mBleScanRemainS > 0) { // 尚未扫描完成,倒计时
+                TextView tv = findViewById(R.id.textViewCountDown);
+                tv.setText(getString(R.string.stop_afterS, mBleScanRemainS));
+            } else {
+                buttonScanClick(null);
+            }
+        }
+        // 无线相关的
+        if (mWiFiAdmin.checkScanWifis(this)) {
+            mWifiAdapter.mScanList = mWiFiAdmin.getWifiList();
+            mWifiListView.setAdapter(mWifiAdapter);
+        }
     }
 
     @Override
@@ -225,13 +270,13 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
     // 根据功能状态，更新控件状态
     private void UpdateActivityControls() {
         Button btn = findViewById(R.id.buttonScan);
-        if (mScanning) { // 正在扫描蓝牙
+        if (mBleScanning) { // 正在扫描蓝牙
             if (_BluetoothUtil.getBlueToothState()) {
                 btn.setText(R.string.stop_scan);
             } else {
                 //buttonScanClick(null);
                 if (BleManager.getInstance().stopScanBleDevice(this)) {
-                    mScanning = false;
+                    mBleScanning = false;
                 }
                 btn.setText(R.string.open_ble);
             }
@@ -241,6 +286,11 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
             } else {
                 btn.setText(R.string.open_ble);
             }
+        }
+        if (mBleScanning) {
+        } else {
+            TextView tview = findViewById(R.id.textViewCountDown);
+            tview.setText("");
         }
     }
 
@@ -255,19 +305,21 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
         }
 
         Button btn = findViewById(R.id.buttonScan);
-        if (!mScanning) { // 开启扫描
+        if (!mBleScanning) { // 开启扫描
             //请求定位权限
             if (!LocationUtil.checkLocationPermission(this)) {
                 LocationUtil.requestLocationPermission(this);
                 return;
             }
             if (BleManager.getInstance().startScanBleDevice(this)) {
-                mScanning = true;
+                mBleScanning = true;
+                mBleScanRemainS = kTotalBleScanS;
                 //btn.setText(R.string.stop_scan);
             }
         } else { // 停止扫描
             if (BleManager.getInstance().stopScanBleDevice(this)) {
-                mScanning = false;
+                mBleScanning = false;
+                //mBleScanRemainS = 0;
                 //btn.setText(R.string.start_scan);
             }
         }
@@ -284,6 +336,10 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
     @Override
     public void onBluetoothOpened(boolean open) {
         UpdateActivityControls();
+        if (open) {
+            buttonScanClick(null);
+        } else {
+        }
     }
 
     // 【激活】蓝牙设备按钮点击
@@ -292,7 +348,7 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
         //ScanResult s_result = mDeviceAdapter.mScanList.get(index);
         if (BleManager.getInstance().connectBluetoothDevice(this, device)) {
         }
-        mDeviceAdapter.mConnDevice = device;
+        //mDeviceAdapter.mConnDevice = device;
         mDeviceListView.setAdapter(mDeviceAdapter);
     }
 

@@ -33,111 +33,14 @@ public class BleManager {
     // 常量
     private static final String TAG = "BleManager";
 
-    // =================================== 下面都是蓝牙扫描相关的 ==================================
-
-    public interface BleScanCallback {
-        void onBleDeviceChanged(List<ScanResult> deviceList);
-    }
-
-    public BleScanCallback mBleScanCallback;
-    private List<ScanResult> mScanResultList = new ArrayList<>();
-
-    // 开始扫描蓝牙设备
-    public boolean startScanBleDevice(Context context) {
-        //BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);//这里与标准蓝牙略有不同
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();// bluetoothManager.getAdapter();
-        BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
-        scanner.startScan(scanCallback);
-/*
-        final BluetoothLeScanner scanner2 = bluetoothAdapter.getBluetoothLeScanner();//BluetoothLeScanner.getScanner();
-        final ScanSettings settings = new ScanSettings.Builder()
-                .setLegacy(false)
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).setReportDelay(1000).setUseHardwareBatchingIfSupported(false).build();
-        final List<ScanFilter> filters = new ArrayList<>();
-        filters.add(new ScanFilter.Builder().setServiceUuid(uuid).build());
-        scanner.startScan(filters, settings, scanCallback);
-*/
-        return true;
-    }
-
-    // 停止扫描蓝牙设备
-    public boolean stopScanBleDevice(Context context) {
-        //BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);//这里与标准蓝牙略有不同
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();// bluetoothManager.getAdapter();
-        BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
-        if (scanner != null) { // 当从设置里关闭蓝牙，会到这里
-            scanner.stopScan(scanCallback);
-        }
-        mScanResultList.clear();
-        mBleScanCallback.onBleDeviceChanged(mScanResultList);
-        return true;
-    }
-
-    // 蓝牙扫描回调
-    private ScanCallback scanCallback = new ScanCallback() {
-        @Override
-        public void onScanResult(final int callbackType, @NonNull final ScanResult result) {
-            // do nothing
-            super.onScanResult(callbackType, result);
-            try {
-                if (result.getScanRecord() == null) {
-                    return;
-                }
-                String deviceName = result.getScanRecord().getDeviceName();
-                if (deviceName != null && deviceName.length() > 0) { // 有名设备
-                    int i = mScanResultList.size() - 1;
-                    for (; i >= 0; i--) {
-                        ScanResult s_result = mScanResultList.get(i);
-                        if (s_result.getScanRecord() == null) {
-                            continue;
-                        }
-                        String dn = s_result.getScanRecord().getDeviceName();
-                        if (dn != null && dn.equals(deviceName)) {
-                            break;
-                        }
-                    }
-                    if (i < 0) {
-                        mScanResultList.add(result);
-                        mBleScanCallback.onBleDeviceChanged(mScanResultList);
-                    }
-                }
-            } catch (java.lang.NullPointerException e) {
-                Log.e("onScanResult", "String is null");
-            }
-        }
-
-        @Override
-        public void onBatchScanResults(@NonNull final List<ScanResult> results) {
-            super.onBatchScanResults(results);
-            //adapter.update(results);
-        }
-
-        @Override
-        public void onScanFailed(final int errorCode) {
-            // should never be called
-            super.onScanFailed(errorCode);
-        }
-    };
-
     // =================================== 下面都是蓝牙连接相关的 ==================================
-    private BluetoothGatt mBleGatt = null;
+    private BluetoothGatt mConnBleGatt = null; // 当前连接的低功耗蓝牙协议，类似于socket，只是低功耗蓝牙用的是gatt协议
 
     public boolean connectBluetoothDevice(Context context, BluetoothDevice device) {
-        if (mBleGatt != null) { // 上次已连接
-            // 先取得当前已连接设备的状态
-            //int state = mBleGatt.getConnectionState(device); // 会崩溃
-            //if (state == 1) {
-            //}
-            //if (mBleGatt.getDevice().equals(device)) { // 现在只有一个【激活】操作，所以先不用这个
-            //    device = null;
-            //}
-            mBleGatt.disconnect(); // 这个会稍后触发onConnectionStateChange(state:1)
-            mBleGatt = null;
-            //mDeviceAdapter.mConnDevice = null;
-        }
+        disconnectBluetoothDevice();
         if (device != null) { // 现在这个一定成立
             // 连接蓝牙设备
-            mBleGatt = device.connectGatt(context, false, new BluetoothGattCallback() {
+            mConnBleGatt = device.connectGatt(context, false, new BluetoothGattCallback() {
                 @Override
                 public void onPhyUpdate(BluetoothGatt gatt, int txPhy, int rxPhy, int status) {
                     super.onPhyUpdate(gatt, txPhy, rxPhy, status);
@@ -267,6 +170,115 @@ public class BleManager {
         }
         return true;
     }
+
+    // 断开与当前蓝牙设备的连接
+    public boolean disconnectBluetoothDevice() {
+        if (mConnBleGatt != null) { // 上次已连接
+            // 先取得当前已连接设备的状态
+            //int state = mBleGatt.getConnectionState(device); // 会崩溃
+            //if (state == 1) {
+            //}
+            //if (mBleGatt.getDevice().equals(device)) { // 现在只有一个【激活】操作，所以先不用这个
+            //    device = null;
+            //}
+            mConnBleGatt.disconnect(); // 这个会稍后触发onConnectionStateChange(state:1)
+            mConnBleGatt = null;
+            //mDeviceAdapter.mConnDevice = null;
+            return true;
+        }
+        return false;
+    }
+
+    // =================================== 下面都是蓝牙扫描相关的 ==================================
+
+    public interface BleScanCallback {
+        void onBleDeviceChanged(List<ScanResult> deviceList);
+    }
+
+    public BleScanCallback mBleScanCallback;
+    private List<ScanResult> mScanResultList = new ArrayList<>();
+
+    // 开始扫描蓝牙设备
+    public boolean startScanBleDevice(Context context) {
+        disconnectBluetoothDevice();
+
+        //BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);//这里与标准蓝牙略有不同
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();// bluetoothManager.getAdapter();
+        BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
+        scanner.startScan(scanCallback);
+/*
+        final BluetoothLeScanner scanner2 = bluetoothAdapter.getBluetoothLeScanner();//BluetoothLeScanner.getScanner();
+        final ScanSettings settings = new ScanSettings.Builder()
+                .setLegacy(false)
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).setReportDelay(1000).setUseHardwareBatchingIfSupported(false).build();
+        final List<ScanFilter> filters = new ArrayList<>();
+        filters.add(new ScanFilter.Builder().setServiceUuid(uuid).build());
+        scanner.startScan(filters, settings, scanCallback);
+*/
+        mScanResultList.clear();
+        mBleScanCallback.onBleDeviceChanged(mScanResultList);
+        return true;
+    }
+
+    // 停止扫描蓝牙设备
+    public boolean stopScanBleDevice(Context context) {
+        //BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);//这里与标准蓝牙略有不同
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();// bluetoothManager.getAdapter();
+        BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
+        if (scanner != null) { // 当从设置里关闭蓝牙，会到这里
+            scanner.stopScan(scanCallback);
+        }
+        //mScanResultList.clear();
+        //mBleScanCallback.onBleDeviceChanged(mScanResultList);
+        return true;
+    }
+
+    // 蓝牙扫描回调
+    private ScanCallback scanCallback = new ScanCallback() {
+        @Override
+        public void onScanResult(final int callbackType, @NonNull final ScanResult result) {
+            // do nothing
+            super.onScanResult(callbackType, result);
+            try {
+                if (result.getScanRecord() == null) {
+                    return;
+                }
+                String deviceName = result.getScanRecord().getDeviceName();
+                if (deviceName != null && deviceName.length() > 0) { // 有名设备
+                    int i = mScanResultList.size() - 1;
+                    for (; i >= 0; i--) {
+                        ScanResult s_result = mScanResultList.get(i);
+                        if (s_result.getScanRecord() == null) {
+                            continue;
+                        }
+                        String dn = s_result.getScanRecord().getDeviceName();
+                        if (dn != null && dn.equals(deviceName)) {
+                            break;
+                        }
+                    }
+                    if (i < 0) {
+                        mScanResultList.add(result);
+                        mBleScanCallback.onBleDeviceChanged(mScanResultList);
+                    }
+                }
+            } catch (java.lang.NullPointerException e) {
+                Log.e("onScanResult", "String is null");
+            }
+        }
+
+        @Override
+        public void onBatchScanResults(@NonNull final List<ScanResult> results) {
+            super.onBatchScanResults(results);
+            //adapter.update(results);
+        }
+
+        @Override
+        public void onScanFailed(final int errorCode) {
+            // should never be called
+            super.onScanFailed(errorCode);
+        }
+    };
+
     // 检查并静默开启蓝牙（已经使用BluetoothUtil里的方法了）
     /*public boolean checkBluetoothOpened(Context context) {
         //BluetoothManag bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);//这里与标准蓝牙略有不同

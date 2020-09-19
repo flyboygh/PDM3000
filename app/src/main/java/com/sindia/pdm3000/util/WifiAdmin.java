@@ -332,7 +332,11 @@ public class WifiAdmin {
         return wifiInfo;
     }
 
-    // 扫描和回调
+    public boolean isWifiEnabled() {
+        return mWifiManager.isWifiEnabled();
+    }
+
+        // 扫描和回调
     //public interface WifiScanCallback {
     //}
     //public WifiScanCallback mWifiScanCallback = null;
@@ -340,6 +344,9 @@ public class WifiAdmin {
     // 提返回的一些状态
     //private boolean mWifiChanged = false;
     //private WifiInfo mLastConnWifi = null;
+
+    // 上次无线是否开启
+    private boolean mPrevWifiEnabled = false;
 
     // 扫描无线，返回和上次的比是否发生了变化
     public boolean checkScanWifis(Context context) {
@@ -371,25 +378,38 @@ public class WifiAdmin {
             mWifiInfo = null;
         }
 
-        // 比较连接是否相同
-        if ((connWifi == null && mWifiInfo == null) || (connWifi != null && mWifiInfo != null && connWifi.getBSSID().equals(mWifiInfo.getBSSID()))) {
-            // 和上次的结果比较
-            if (mWifiList.size() == oldWifiCount) { // 数量相同
-                // 比较顺序
-                int i = 0, count = mWifiList.size();
-                for (i = 0; i < count; i++) {
-                    ScanResult sr1 = mWifiList.get(i);
-                    ScanResult sr2 = oldWifiList.get(i);
-                    if (!sr1.BSSID.equals(sr2.BSSID)) {
-                        break;
+        // 当前WIFI是否可用
+        boolean wifiEnabled = mWifiManager.isWifiEnabled();
+        if (wifiEnabled) {
+        } else {
+            mWifiInfo = null;
+            mWifiList.clear();
+        }
+
+        // 比较无线网状态是否相同
+        if (wifiEnabled == mPrevWifiEnabled) {
+            // 比较连接是否相同
+            if ((connWifi == null && mWifiInfo == null) || (connWifi != null && mWifiInfo != null && connWifi.getBSSID().equals(mWifiInfo.getBSSID()))) {
+                // 和上次的结果比较
+                int wifiCount = ( mWifiList == null ? 0 : mWifiList.size() );
+                if (wifiCount == oldWifiCount) { // 数量相同
+                    // 比较顺序
+                    int i = 0, count = mWifiList.size();
+                    for (i = 0; i < count; i++) {
+                        ScanResult sr1 = mWifiList.get(i);
+                        ScanResult sr2 = oldWifiList.get(i);
+                        if (!sr1.BSSID.equals(sr2.BSSID)) {
+                            break;
+                        }
                     }
-                }
-                if (i == count) { // 顺序也相同
-                    return false;
+                    if (i == count) { // 顺序也相同
+                        return false;
+                    }
                 }
             }
         }
         mWifiInfo = connWifi;
+        mPrevWifiEnabled = wifiEnabled;
         return true;
         /*
         List<android.net.wifi.ScanResult> listb = mWifiList;//mWifiManager.getScanResults();

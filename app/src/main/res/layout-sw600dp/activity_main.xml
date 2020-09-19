@@ -53,6 +53,17 @@
         app:layout_constraintStart_toEndOf="@+id/textViewDeviceList"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/buttonOpenWifi"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="26dp"
+        android:onClick="buttonWifiClick"
+        android:text="@string/open_wifi"
+        app:layout_constraintStart_toEndOf="@+id/textViewWifiList"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/textViewDeviceList"
         android:layout_width="wrap_content"

@@ -11,68 +11,68 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="32dp"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonScan"
         app:layout_constraintStart_toEndOf="@+id/buttonScan"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/buttonScan" />
 
     <TextView
         android:id="@+id/textViewWifiList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="@string/wifi_"
+        android:layout_marginTop="11dp"
+        android:text="@string/wifi_list"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.57"
+        app:layout_constraintHorizontal_bias="0.12"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/listviewDevices"
         app:layout_constraintVertical_bias="0.0" />
 
     <ListView
         android:id="@+id/listviewWifis"
         android:layout_width="0dp"
-        android:layout_height="159dp"
-        android:layout_marginStart="6dp"
+        android:layout_height="130dp"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="12dp"
+        android:layout_marginEnd="40dp"
         android:background="#E0E0D0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toEndOf="@id/listviewDevices"
-        app:layout_constraintTop_toBottomOf="@id/textViewDeviceList" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewWifiList" />
 
     <TextView
         android:id="@+id/textViewDeviceList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="@string/device_"
+        android:layout_marginTop="11dp"
+        android:text="@string/device_list"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.04"
+        app:layout_constraintHorizontal_bias="0.12"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/buttonParamSet"
         android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="50dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="40dp"
         android:text="@string/param_set"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/listviewDevices" />
+        app:layout_constraintTop_toBottomOf="@+id/listviewWifis" />
 
     <Button
         android:id="@+id/buttonFileCopy"
         android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="50dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="50dp"
+        android:layout_marginEnd="40dp"
         android:text="@string/file_copy"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -81,10 +81,10 @@
     <Button
         android:id="@+id/buttonFileView"
         android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="50dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="50dp"
+        android:layout_marginEnd="40dp"
         android:text="@string/file_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -95,22 +95,31 @@
         android:id="@+id/buttonScan"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
-        android:layout_marginTop="21dp"
         android:onClick="buttonScanClick"
-        android:text="@string/start_scan"
+        android:text="@string/open_ble"
         android:textSize="14sp"
         app:layout_constraintStart_toEndOf="@+id/textViewDeviceList"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/buttonOpenWifi"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:onClick="buttonWifiClick"
+        android:text="@string/open_wifi"
+        android:textSize="14sp"
+        app:layout_constraintStart_toEndOf="@+id/textViewWifiList"
+        app:layout_constraintTop_toBottomOf="@+id/listviewDevices" />
+
     <ListView
         android:id="@+id/listviewDevices"
         android:layout_width="0dp"
-        android:layout_height="160dp"
-        android:layout_marginStart="12dp"
+        android:layout_height="130dp"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="6dp"
+        android:layout_marginEnd="40dp"
         android:background="#E0E0D0"
-        app:layout_constraintEnd_toStartOf="@id/listviewWifis"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewDeviceList" />

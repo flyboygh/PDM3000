@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.bluetooth.BluetoothDevice;
 import android.graphics.Color;
-import android.net.wifi.WifiInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,7 +13,6 @@ import android.widget.Button;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sindia.pdm3000.adapter.BleDeviceAdapter;
 import com.sindia.pdm3000.adapter.WifiAdapter;
@@ -24,8 +22,6 @@ import com.sindia.pdm3000.util.LocationUtil;
 import com.sindia.pdm3000.util.WifiAdmin;
 
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements BluetoothUtil.BluetoothStateCallback, BleDeviceAdapter.Callback, WifiAdapter.Callback { //AdapterView.OnItemClickListener,
     // 常量
@@ -128,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
         int n = wiFiAdmin.checkState();
 */
         mWiFiAdmin = new WifiAdmin(this);
-        mWiFiAdmin.openWifi();
+        //mWiFiAdmin.openWifi(); // 觉得启动后提示开启无线网不太好，而且现在也有了手动开启的按钮
 
         // 判断wifi是否开启
         /*mWifiManager = (WifiManager)getApplicationContext().getSystemService(WIFI_SERVICE);
@@ -216,10 +212,7 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
         // 更新控件显赫
         UpdateActivityControls();
 
-        // 程序启动后自动开始扫描蓝牙
-        buttonScanClick(null);
-
-        // 创建主定时器
+        // 创建主定时器并唤起
         mTimerHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -230,7 +223,16 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
                 }
             }
         };
-        mTimerHandler.sendEmptyMessage(kMainTimerID);
+        mTimerHandler.sendEmptyMessageDelayed(kMainTimerID, kMainTimerDelay);
+
+        // 延迟执行的方法
+        mTimerHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // 程序启动后自动开始扫描蓝牙
+                buttonScanClick(null);
+            }
+        }, 2000);
     }
 
     // 主定时器消息
@@ -249,6 +251,8 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
         if (mWiFiAdmin.checkScanWifis(this)) {
             mWifiAdapter.mScanList = mWiFiAdmin.getWifiList();
             mWifiListView.setAdapter(mWifiAdapter);
+            // 更新无线按钮状态
+            UpdateActivityControls();
         }
     }
 
@@ -298,6 +302,15 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
             TextView tview = findViewById(R.id.textViewCountDown);
             tview.setText("");
         }
+
+        // 设置无线按钮状态
+        btn = findViewById(R.id.buttonOpenWifi);
+        if (mWiFiAdmin.isWifiEnabled()) { // WIFI已开启
+            btn.setVisibility(View.INVISIBLE);
+        } else {
+            btn.setTextColor(Color.RED);
+            btn.setVisibility(View.VISIBLE);
+        }
     }
 
     // 开启蓝牙/扫描/停止
@@ -335,16 +348,22 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
         //}
     }
 
+    // 开启无线
+    public void buttonWifiClick(View view) {
+        //Button btn = findViewById(R.id.buttonOpenWifi);
+        mWiFiAdmin.openWifi();
+    }
+
     //@Override
     //public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
     //}
 
     @Override
     public void onBluetoothOpened(boolean open) {
-        UpdateActivityControls();
         if (open) {
             buttonScanClick(null);
         } else {
+            UpdateActivityControls();
         }
     }
 

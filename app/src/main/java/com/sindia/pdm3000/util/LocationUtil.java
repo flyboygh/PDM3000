@@ -63,7 +63,14 @@ public class LocationUtil {
             int checkResult = checkOp(context, 2, AppOpsManager.OPSTR_FINE_LOCATION);//其中2代表AppOpsManager.OP_GPS，如果要判断悬浮框权限，第二个参数需换成24即AppOpsManager。OP_SYSTEM_ALERT_WINDOW及，第三个参数需要换成AppOpsManager.OPSTR_SYSTEM_ALERT_WINDOW
             int checkResult2 = checkOp(context, 1, AppOpsManager.OPSTR_FINE_LOCATION);
             //未开启定位权限或者被拒绝的操作
-            return AppOpsManagerCompat.MODE_IGNORED != checkResult && AppOpsManagerCompat.MODE_IGNORED != checkResult2;
+            // MODE_ALLOWED = 0 允许
+            // MODE_IGNORED = 1 拒绝
+            // 5 询问
+            if (checkResult == AppOpsManagerCompat.MODE_ALLOWED && checkResult2 == AppOpsManagerCompat.MODE_ALLOWED) {
+                return true;
+            }
+            return false;
+            //return AppOpsManagerCompat.MODE_IGNORED != checkResult && AppOpsManagerCompat.MODE_IGNORED != checkResult2;
         }
     }
     /*
@@ -109,7 +116,9 @@ public class LocationUtil {
     // 请求定位服务、权限
     public static void requestLocationPermission(final Activity activity) {
         //请求权限
-        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_COARSE_LOCATION) || ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
+        boolean hasCoarse = ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_COARSE_LOCATION);
+        boolean hasFine = ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_FINE_LOCATION);
+        if (hasCoarse || hasFine) { // 在家晨手机上，当询问模式时，这个还是不成立。有空再研究
             ActivityCompat.requestPermissions( activity, new String[] {
                     Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 0);
         } else {

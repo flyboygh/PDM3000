@@ -78,14 +78,16 @@ public class WifiAdapter extends BaseAdapter implements View.OnClickListener {
         } else {
             btnConnect.setText(R.string.connect);
             btnConnect.setVisibility(View.VISIBLE);
-        }
+        }*/
         btnConnect.setOnClickListener(this);
-        btnConnect.setTag(i);*/
+        btnConnect.setTag(i);
         return view;
     }
 
     @Override
     public void onClick(View view) {
-
+        //int index = (int)view.getTag();
+        //ScanResult s_result = mScanList.get(index);
+        //mCallback.activateBleClick(s_result.);//.getDevice());
     }
 }

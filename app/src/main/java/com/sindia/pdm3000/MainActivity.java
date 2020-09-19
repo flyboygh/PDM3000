@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.bluetooth.BluetoothDevice;
+import android.graphics.Color;
 import android.net.wifi.WifiInfo;
 import android.os.Bundle;
 import android.os.Handler;
@@ -68,10 +69,10 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
         //    finish();
         //}
 
-        // 启动后如果没有定位能力就尝试开启
-        if (!LocationUtil.checkLocationPermission(this)) {
-            LocationUtil.requestLocationPermission(this);
-        }
+        // 启动后如果没有定位能力就尝试开启(启动后会触发自动扫描蓝牙，其内部会检测定位)
+        //if (!LocationUtil.checkLocationPermission(this)) {
+        //    LocationUtil.requestLocationPermission(this);
+        //}
 
         // 蓝牙工具类
         _BluetoothUtil = new BluetoothUtil();
@@ -89,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
         mDeviceAdapter = new BleDeviceAdapter(this, this);
         mDeviceListView = findViewById(R.id.listviewDevices);
         //mDeviceListView.setOnItemClickListener(this);
-        mDeviceListView.setAdapter(mDeviceAdapter);
+        //mDeviceListView.setAdapter(mDeviceAdapter);
 
         // 设备扫描结果回调
         BleManager.getInstance().mBleScanCallback = new BleManager.BleScanCallback() {
@@ -104,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
         mWifiAdapter = new WifiAdapter(this, this);
         mWifiListView = findViewById(R.id.listviewWifis);
         //mWifiListView.setOnItemClickListener(this);
-        mWifiListView.setAdapter(mWifiAdapter);
+        //mWifiListView.setAdapter(mWifiAdapter);
 /*
         //Check for permissions
         int n1 = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
@@ -269,26 +270,31 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
 
     // 根据功能状态，更新控件状态
     private void UpdateActivityControls() {
+        // 设置蓝牙按钮状态
         Button btn = findViewById(R.id.buttonScan);
-        if (mBleScanning) { // 正在扫描蓝牙
-            if (_BluetoothUtil.getBlueToothState()) {
+        boolean bluetoothEnable = _BluetoothUtil.getBlueToothState();
+        if (bluetoothEnable) { // 蓝牙已开启
+            if (mBleScanning) { // 正在扫描蓝牙
                 btn.setText(R.string.stop_scan);
             } else {
+                btn.setText(R.string.start_scan);
+            }
+            btn.setTextColor(Color.BLACK);
+            //btn.setBackgroundColor(Color.WHITE);
+        } else { // 蓝牙未开启
+            if (mBleScanning) { // 正在扫描蓝牙
                 //buttonScanClick(null);
                 if (BleManager.getInstance().stopScanBleDevice(this)) {
                     mBleScanning = false;
                 }
-                btn.setText(R.string.open_ble);
             }
-        } else { // 未在扫描蓝牙
-            if (_BluetoothUtil.getBlueToothState()) {
-                btn.setText(R.string.start_scan);
-            } else {
-                btn.setText(R.string.open_ble);
-            }
+            btn.setText(R.string.open_ble);
+            btn.setTextColor(Color.RED);
+            //btn.setBackgroundColor(Color.RED);
         }
-        if (mBleScanning) {
-        } else {
+        // 设置蓝牙倒计时文字
+        if (mBleScanning) { // 正在蓝牙扫描
+        } else { // 已停止扫描
             TextView tview = findViewById(R.id.textViewCountDown);
             tview.setText("");
         }

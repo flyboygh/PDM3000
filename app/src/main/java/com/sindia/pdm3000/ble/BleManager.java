@@ -24,11 +24,11 @@ import java.util.UUID;
 // 低功耗蓝牙管理类（单例）
 public class BleManager {
     // 单例接口
-    private static BleManager instance = new BleManager();
+    /*private static BleManager instance = new BleManager();
     private BleManager(){}
     public static BleManager getInstance(){
         return instance;
-    }
+    }*/
 
     // 常量
     private static final String TAG = "BleManager";

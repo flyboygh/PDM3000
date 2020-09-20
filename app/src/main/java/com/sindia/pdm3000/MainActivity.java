@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
     private int mBleScanRemainS = 0; // 低功耗扫描剩余秒数
     // 蓝牙相关的
     private ListView mDeviceListView = null;
+    private BleManager mBleManager;
     private BleDeviceAdapter mDeviceAdapter;
     private BluetoothUtil _BluetoothUtil = null;
     // 无线网相关的
@@ -89,7 +90,8 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
         //mDeviceListView.setAdapter(mDeviceAdapter);
 
         // 设备扫描结果回调
-        BleManager.getInstance().mBleScanCallback = new BleManager.BleScanCallback() {
+        mBleManager = new BleManager();
+        mBleManager.mBleScanCallback = new BleManager.BleScanCallback() {
             @Override
             public void onBleDeviceChanged(List<android.bluetooth.le.ScanResult> deviceList) {
                 mDeviceAdapter.mScanList = deviceList;
@@ -121,7 +123,6 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
         }
         else
             Log.d(TAG, "Permissions already granted");
-        int n = wiFiAdmin.checkState();
 */
         mWiFiAdmin = new WifiAdmin(this);
         //mWiFiAdmin.openWifi(); // 觉得启动后提示开启无线网不太好，而且现在也有了手动开启的按钮
@@ -288,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
         } else { // 蓝牙未开启
             if (mBleScanning) { // 正在扫描蓝牙
                 //buttonScanClick(null);
-                if (BleManager.getInstance().stopScanBleDevice(this)) {
+                if (mBleManager.stopScanBleDevice(this)) {
                     mBleScanning = false;
                 }
             }
@@ -330,13 +331,13 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
                 LocationUtil.requestLocationPermission(this);
                 return;
             }
-            if (BleManager.getInstance().startScanBleDevice(this)) {
+            if (mBleManager.startScanBleDevice(this)) {
                 mBleScanning = true;
                 mBleScanRemainS = kTotalBleScanS;
                 //btn.setText(R.string.stop_scan);
             }
         } else { // 停止扫描
-            if (BleManager.getInstance().stopScanBleDevice(this)) {
+            if (mBleManager.stopScanBleDevice(this)) {
                 mBleScanning = false;
                 //mBleScanRemainS = 0;
                 //btn.setText(R.string.start_scan);
@@ -351,7 +352,8 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
     // 开启无线
     public void buttonWifiClick(View view) {
         //Button btn = findViewById(R.id.buttonOpenWifi);
-        mWiFiAdmin.openWifi();
+        mWiFiAdmin.checkOpenWifi(this);
+        //mWiFiAdmin.openWifi();
     }
 
     //@Override
@@ -371,7 +373,7 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
     @Override
     public void activateBleClick(BluetoothDevice device) {
         //ScanResult s_result = mDeviceAdapter.mScanList.get(index);
-        if (BleManager.getInstance().connectBluetoothDevice(this, device)) {
+        if (mBleManager.connectBluetoothDevice(this, device)) {
         }
         //mDeviceAdapter.mConnDevice = device;
         mDeviceListView.setAdapter(mDeviceAdapter);
@@ -379,8 +381,8 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
 
     // 【连接】wifi按钮点击
     @Override
-    public void connectWifiClick(int index) {
-
+    public void connectWifiClick(String SSID) {
+        //mWiFiAdmin.disconnWifiBySSID(SSID);
     }
 
     //private void broadcastUpdate(final String action) {

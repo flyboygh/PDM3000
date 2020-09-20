@@ -1,12 +1,24 @@
 package com.sindia.pdm3000.util;//com.tchip.carlauncher.util;
 
 import java.util.List;
+
 import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
+import android.net.NetworkRequest;
+import android.net.NetworkSpecifier;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
+import android.net.wifi.WifiNetworkSpecifier;
+import android.os.Build;
+import android.os.PatternMatcher;
+import android.provider.Settings;
 import android.util.Log;
 
 public class WifiAdmin {
@@ -100,7 +112,8 @@ public class WifiAdmin {
                 true);
     }
     public void startScan() {
-        //mWifiManager.startScan();
+        // 此处必须扫描，否则手机上不会有实时列表
+        mWifiManager.startScan();
         // 得到扫描结果
         mWifiList = mWifiManager.getScanResults();
         // 得到配置好的网络连接
@@ -311,14 +324,16 @@ public class WifiAdmin {
     }
 
     //////////////////////////////// 下面是自定义的 ////////////////////////////////
-
 /*
-    public WifiManager getWifiManager() {
-        return mWifiManager;
+    // 单例接口
+    private static WifiAdmin instance = new WifiAdmin();
+    private WifiAdmin(){}
+    public static WifiAdmin getInstance(){
+        return instance;
     }
 */
     // 一些静态接口方法
-    public static WifiInfo getConnectWifiInfo(Context context) {
+    /*public static WifiInfo getConnectWifiInfo(Context context) {
         // 获得WifiManager对象
         WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
         // 取得WifiInfo对象
@@ -326,14 +341,32 @@ public class WifiAdmin {
         if (wifiInfo == null || wifiInfo.getBSSID() == null) {
             return null;
         }
-        //if (wifiInfo == null) {
-        //    wifiInfo = new WifiInfo();
-        //}
         return wifiInfo;
+    }*/
+
+    // 取得当前已连接的BSSID
+    public String getConnectedBSSID(Context context) {
+        // 取得WifiInfo对象
+        WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+        if (wifiInfo == null || wifiInfo.getBSSID() == null) {
+            return "";
+        }
+        return wifiInfo.getBSSID();
     }
 
     public boolean isWifiEnabled() {
         return mWifiManager.isWifiEnabled();
+    }
+
+    public void checkOpenWifi(Context context) {
+        if (!mWifiManager.isWifiEnabled()) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) { // 29
+                mWifiManager.setWifiEnabled(true);
+            } else {
+                Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);//ACTION_WIRELESS_SETTINGS是系统的设置WIFI页面
+                context.startActivity(intent);
+            }
+        }
     }
 
         // 扫描和回调
@@ -347,6 +380,7 @@ public class WifiAdmin {
 
     // 上次无线是否开启
     private boolean mPrevWifiEnabled = false;
+    private String mPrevConnectBSSID = "";
 
     // 扫描无线，返回和上次的比是否发生了变化
     public boolean checkScanWifis(Context context) {
@@ -370,26 +404,20 @@ public class WifiAdmin {
         }*/
 
         // 取得当前连接wifi信息
-        WifiInfo connWifi = getConnectWifiInfo(context);
-        //if (connWifi == null || connWifi.getBSSID() == null) {
-        //    connWifi = null;
-        //}
-        if (mWifiInfo == null || mWifiInfo.getBSSID() == null) {
-            mWifiInfo = null;
-        }
+        String connectBSSID = getConnectedBSSID(context);
 
         // 当前WIFI是否可用
         boolean wifiEnabled = mWifiManager.isWifiEnabled();
         if (wifiEnabled) {
         } else {
-            mWifiInfo = null;
+            connectBSSID = "";
             mWifiList.clear();
         }
 
         // 比较无线网状态是否相同
         if (wifiEnabled == mPrevWifiEnabled) {
             // 比较连接是否相同
-            if ((connWifi == null && mWifiInfo == null) || (connWifi != null && mWifiInfo != null && connWifi.getBSSID().equals(mWifiInfo.getBSSID()))) {
+            if (connectBSSID.equals(mPrevConnectBSSID)) {
                 // 和上次的结果比较
                 int wifiCount = ( mWifiList == null ? 0 : mWifiList.size() );
                 if (wifiCount == oldWifiCount) { // 数量相同
@@ -408,7 +436,7 @@ public class WifiAdmin {
                 }
             }
         }
-        mWifiInfo = connWifi;
+        mPrevConnectBSSID = connectBSSID;
         mPrevWifiEnabled = wifiEnabled;
         return true;
         /*
@@ -450,5 +478,108 @@ public class WifiAdmin {
         Message msg = new Message();
         handler.sendMessage(msg);
          */
+    }
+
+    private WifiConfiguration getConfigBySSID(String SSID) {
+        List<WifiConfiguration> configList = mWifiManager.getConfiguredNetworks();// 得到配置好的网络信息
+        for (int i = 0; i < configList.size(); i++) {
+            WifiConfiguration wifiConf = configList.get(i);
+            String s = wifiConf.SSID;
+            if (s.length() > 0 && s.charAt(0) == '"') {
+                s = s.substring(1);
+            }
+            if (s.length() > 0 && s.charAt(s.length()-1) == '"') {
+                s = s.substring(0, s.length() - 1);
+            }
+            if (s.equals(SSID)) {
+                return wifiConf;
+            }
+        }
+        return null;
+    }
+
+    // 连接指定WIFI
+    public boolean connectWifiBySSID(Context context, String SSID) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) { // 29
+            mWifiManager.disconnect(); // 加这一句就能断开当前连接
+            int networkId = -1;
+            WifiConfiguration wifiConf = getConfigBySSID(SSID);
+            if (wifiConf != null) {
+                networkId = wifiConf.networkId;
+            } else {
+                String pwd = "39vu2jhh";
+                WifiConfiguration wifiCong = new WifiConfiguration();
+                wifiCong.SSID = "\"" + SSID + "\"";// \"转义字符，代表"
+                wifiCong.preSharedKey = "\"" + pwd + "\"";// WPA-PSK密码
+                wifiCong.hiddenSSID = false;
+                wifiCong.status = WifiConfiguration.Status.ENABLED;
+                networkId = mWifiManager.addNetwork(wifiCong);// 将配置好的特定WIFI密码信息添加,添加完成后默认是不激活状态，成功返回ID，否则为-1
+            }
+            if (networkId != -1) {
+                boolean b = mWifiManager.enableNetwork(networkId, true);
+                if (b) {
+                    //b = mWifiManager.reconnect(); // 感觉没什么用
+                }
+                return b;
+            }
+        } else {
+            NetworkSpecifier specifier = new WifiNetworkSpecifier.Builder()
+                            .setSsidPattern(new PatternMatcher(SSID, PatternMatcher.PATTERN_PREFIX))
+                            .setWpa2Passphrase("")//39vu2jhh")//WiFi密码
+                            .build();
+
+            NetworkRequest request = new NetworkRequest.Builder()
+                            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                            .removeCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                            //.addCapability(NetworkCapabilities.NET_CAPABILITY_NOT_RESTRICTED)//网络不受限
+                            //.addCapability(NetworkCapabilities.NET_CAPABILITY_TRUSTED)//信任网络，增加这个连个参数让设备连接wifi之后还联网。
+                            .setNetworkSpecifier(specifier)
+                            .build();
+
+            ConnectivityManager connectivityManager = (ConnectivityManager)
+                    context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            //Network[] list = connectivityManager.getAllNetworks();
+            //int n = list.length;
+
+            ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
+                @Override
+                public void onAvailable(Network network) {
+                    // do success processing here..
+                }
+
+                @Override
+                public void onUnavailable() {
+                    // do failure processing here..
+                }
+            };
+            connectivityManager.requestNetwork(request, networkCallback);
+            // Release the request when done.
+            // connectivityManager.unregisterNetworkCallback(networkCallback);
+        }
+        return false;
+    }
+
+    // 断开与WIFI的连接
+    public boolean disconnWifiBySSID(Context context, String SSID) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) { // 29
+            WifiConfiguration wifiConf = getConfigBySSID(SSID);
+            if (wifiConf != null) {
+                int networkId = wifiConf.networkId;
+                //mWifiManager.disableNetwork(networkId); // 这个在android9上会弹一次提示
+                mWifiManager.disconnect(); // 这个在android9上会弹一次提示 // 加这一句就能断开当前连接
+                //disConnectionWifi(networkId);
+                return true;
+            }
+        } else {
+            ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            Network network = connectivityManager.getActiveNetwork();
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            boolean isConnected = networkInfo.isConnected();
+            int networkType = networkInfo.getType();
+            if (networkType == ConnectivityManager.TYPE_WIFI) {
+            } else if (networkType == ConnectivityManager.TYPE_MOBILE) {
+            }
+        }
+        return false;
     }
 }

@@ -11,6 +11,7 @@
     <string name="open_ble">开启蓝牙</string>
     <string name="open_wifi">开启无线</string>
     <string name="connect">连接</string>
+    <string name="connecting">连接中</string>
     <string name="disconn">断开</string>
     <string name="activate">激活</string>
     <string name="stop_afterS">%d秒后停止</string>

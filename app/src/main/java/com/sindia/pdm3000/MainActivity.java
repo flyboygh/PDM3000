@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.sindia.pdm3000.adapter.BleDeviceAdapter;
 import com.sindia.pdm3000.adapter.WifiAdapter;
 import com.sindia.pdm3000.ble.BleManager;
+import com.sindia.pdm3000.http.OkHttpHelper;
 import com.sindia.pdm3000.util.BluetoothUtil;
 import com.sindia.pdm3000.util.LocationUtil;
 import com.sindia.pdm3000.util.WifiAdmin;
@@ -234,6 +235,14 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
                 buttonScanClick(null);
             }
         }, 2000);
+/*
+        String url = "https://hq.sinajs.cn/list=sh600028";
+        boolean b = OkHttpHelper.requestHttp(url, new OkHttpHelper.OkHttpCallback() {
+            @Override
+            public void onHttpRespond(int code, String body) {
+                Log.e(TAG, body);
+            }
+        });*/
     }
 
     // 主定时器消息

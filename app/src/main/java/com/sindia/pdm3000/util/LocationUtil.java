@@ -118,7 +118,7 @@ public class LocationUtil {
         //请求权限
         boolean hasCoarse = ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_COARSE_LOCATION);
         boolean hasFine = ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_FINE_LOCATION);
-        if (hasCoarse || hasFine) { // 在家晨手机上，当询问模式时，这个还是不成立。有空再研究
+        if (hasCoarse || hasFine) { // 在家晨手机上，当询问模式时，这个还是不成立。有空再研究（应该在后台时，这两个都是false）
             ActivityCompat.requestPermissions( activity, new String[] {
                     Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 0);
         } else {

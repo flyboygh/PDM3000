@@ -18,6 +18,7 @@ import com.sindia.pdm3000.adapter.BleDeviceAdapter;
 import com.sindia.pdm3000.adapter.WifiAdapter;
 import com.sindia.pdm3000.ble.BleManager;
 import com.sindia.pdm3000.http.PdHttpRequest;
+import com.sindia.pdm3000.util.ApplicationUtil;
 import com.sindia.pdm3000.util.BluetoothUtil;
 import com.sindia.pdm3000.util.LocationUtil;
 import com.sindia.pdm3000.util.WifiAdmin;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
     private static final long kMainTimerDelay = 1000;
     private Handler mTimerHandler;
     // 状态相关的
+    private boolean mForegndInit = false; // 是否已完成前台状态下的初始化
     private boolean mBleScanning = false; // 低功耗是否正在扫描
     private int mBleScanRemainS = 0; // 低功耗扫描剩余秒数
     // 蓝牙相关的
@@ -227,14 +229,14 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
         };
         mTimerHandler.sendEmptyMessageDelayed(kMainTimerID, kMainTimerDelay);
 
-        // 延迟执行的方法
-        mTimerHandler.postDelayed(new Runnable() {
+        // 延迟执行的方法（已经挪到下面了）
+        /*mTimerHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 // 程序启动后自动开始扫描蓝牙
                 buttonScanClick(null);
             }
-        }, 2000);
+        }, 2000);*/
 
         /*String url = "https://hq.sinajs.cn/list=sh600028";
         boolean b = OkHttpHelper.requestHttp(url, new OkHttpHelper.OkHttpCallback() {
@@ -247,38 +249,47 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
 
     // 主定时器消息
     private void onMainTimerMessage() {
-        // 蓝牙相关的
-        if (mBleScanning) {
-            mBleScanRemainS--;
-            if (mBleScanRemainS > 0) { // 尚未扫描完成,倒计时
-                TextView tv = findViewById(R.id.textViewCountDown);
-                tv.setText(getString(R.string.stop_afterS, mBleScanRemainS));
-            } else {
+        // 下面都是依赖于前台的
+        if (ApplicationUtil.isForeground(this)) {
+            // 蓝牙相关的
+            if (mBleScanning) {
+                mBleScanRemainS--;
+                if (mBleScanRemainS > 0) { // 尚未扫描完成,倒计时
+                    TextView tv = findViewById(R.id.textViewCountDown);
+                    tv.setText(getString(R.string.stop_afterS, mBleScanRemainS));
+                } else { // 停止扫描
+                    buttonScanClick(null);
+                }
+            }
+            // 启动后做一次自动蓝牙扫描
+            if (!mForegndInit) {
+                mForegndInit = true;
+                // 程序启动后自动开始扫描蓝牙
                 buttonScanClick(null);
             }
-        }
-        // 无线相关的
-        if (mWiFiAdmin.checkScanWifis(this)) {
-            mWifiAdapter.updateWifiList(mWiFiAdmin.getWifiList());
-            mWifiListView.setAdapter(mWifiAdapter);
-            // 更新无线按钮状态
-            UpdateActivityControls();
-        }
-        // 定时发送http心跳
-        if (mWifiAdapter.hasConnectedSindiaWifi()) {
-            if (PdHttpRequest.shouldPostHeartBeat()) {
-                PdHttpRequest.postHeartBeat(new PdHttpRequest.Callback() {
-                    @Override
-                    public void onResponse(PdHttpRequest.ResponseBase resp) {
+            // 无线相关的
+            if (mWiFiAdmin.checkScanWifis(this)) {
+                mWifiAdapter.updateWifiList(mWiFiAdmin.getWifiList());
+                mWifiListView.setAdapter(mWifiAdapter);
+                // 更新无线按钮状态
+                UpdateActivityControls();
+            }
+            // 定时发送http心跳
+            if (mWifiAdapter.hasConnectedSindiaWifi()) {
+                if (PdHttpRequest.shouldPostHeartBeat()) {
+                    PdHttpRequest.postHeartBeat(new PdHttpRequest.Callback() {
+                        @Override
+                        public void onResponse(PdHttpRequest.ResponseBase resp) {
 
-                    }
-                });
-                /*PdHttpRequest.postHeartBeat(new )
-                    @Override
-                    public void onPdHttpRespond(PdHttpRequest.ResponseBase resp) {
+                        }
+                    });
+                    /*PdHttpRequest.postHeartBeat(new )
+                        @Override
+                        public void onPdHttpRespond(PdHttpRequest.ResponseBase resp) {
 
-                    }
-                });*/
+                        }
+                    });*/
+                }
             }
         }
     }

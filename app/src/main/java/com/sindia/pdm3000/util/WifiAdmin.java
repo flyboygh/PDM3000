@@ -344,6 +344,20 @@ public class WifiAdmin {
         return wifiInfo;
     }*/
 
+    // 取得当前已连接的SSID
+    public String getConnectedSSID(Context context) {
+        // 取得WifiInfo对象
+        WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+        if (wifiInfo == null || wifiInfo.getSSID() == null) {
+            return "";
+        }
+        String ssid = wifiInfo.getSSID();
+        if (ssid.length() >= 2 && ssid.charAt(0) == '"' && ssid.charAt(ssid.length() - 1) == '"') {
+            ssid = ssid.substring(1, ssid.length() - 1);
+        }
+        return ssid;
+    }
+
     // 取得当前已连接的BSSID
     public String getConnectedBSSID(Context context) {
         // 取得WifiInfo对象

@@ -19,24 +19,76 @@ import java.util.List;
 
 // 无线网记录适配类
 public class WifiAdapter extends BaseAdapter implements View.OnClickListener {
+    private static final String kSindiaWifiPrefix = "SINDIA"; // 兴迪3000无线网前缀
+
+    private Context mContext = null;
+    private Callback mCallback = null;
+    private WifiAdmin mWiFiAdmin = null;
+    private List<ScanResult> mShowWifiList = new ArrayList<>(); // 当前‘有效的’无线网列表，可以在界面上显示的
+
+    // 上层回调
     public interface Callback {
         public void connectWifiClick(String SSID);
     }
 
-    private Context mContext = null;
-    private Callback mCallback = null;
-    private WifiAdmin mWiFiAdmin;
-    public List<ScanResult> mScanList = new ArrayList<>();
-
+    // 构造函数
     public WifiAdapter(Context context, Callback callback) {
         mContext = context;
         mCallback = callback;
         mWiFiAdmin = new WifiAdmin(context);
     }
 
+    // 更新兴迪无线网列表
+    public void updateWifiList(List<ScanResult> wifiList) {
+        // 先把需要显示的有效元素加进去
+        mShowWifiList.clear();
+        for (int i = 0; i < wifiList.size(); i++) {
+            ScanResult s_result = wifiList.get(i);
+            if (s_result.BSSID != null && !s_result.BSSID.isEmpty() &&
+                s_result.SSID != null && !s_result.SSID.isEmpty()) {
+                mShowWifiList.add(s_result);
+            }
+        }
+
+        // 根据规则排序（已连接的优先，兴迪其次）
+        for (int i = 0; i < mShowWifiList.size() - 1; i++) {
+            for (int j = i + 1; j < mShowWifiList.size(); j++) {
+                ScanResult s1 = mShowWifiList.get(i);
+                ScanResult s2 = mShowWifiList.get(j);
+                int n1 = getWifiSortInt(s1);
+                int n2 = getWifiSortInt(s2);
+                if (n1 < n2) {
+                    mShowWifiList.set(i, s2);
+                    mShowWifiList.set(j, s1);
+                }
+            }
+        }
+    }
+
+    // 是否连接到了兴迪无线网
+    public boolean hasConnectedSindiaWifi() {
+        String curSSID = mWiFiAdmin.getConnectedSSID(mContext);
+        if (curSSID.toUpperCase().startsWith(kSindiaWifiPrefix)) {
+            return true;
+        }
+        return false;
+    }
+
+    // 下面是内部工具方法
+    private int getWifiSortInt(final ScanResult s_result) {
+        String curBSSID = mWiFiAdmin.getConnectedBSSID(mContext);
+        if (curBSSID.equals(s_result.BSSID)) {
+            return 2;
+        }
+        if (s_result.SSID.toUpperCase().startsWith(kSindiaWifiPrefix)) {
+            return 1;
+        }
+        return 0;
+    }
+
     @Override
     public int getCount() {
-        return mScanList.size();
+        return mShowWifiList.size();
     }
 
     @Override
@@ -55,12 +107,12 @@ public class WifiAdapter extends BaseAdapter implements View.OnClickListener {
 
         // 无线网名称
         TextView txt_aName = view.findViewById(R.id.textViewDeviceName);
-        ScanResult s_result = mScanList.get(i);
-        String s = s_result.SSID;
-        if (s != null) {
-            txt_aName.setText(s);
-        } else {
-            Log.d("", "");
+        ScanResult s_result = mShowWifiList.get(i);
+        String ssid = s_result.SSID;
+        if (ssid != null) {
+            txt_aName.setText(ssid);
+        } else { // 内错
+            Log.e("内错", "getView中ssid为空");
         }
 
         // 无线网连接状态
@@ -97,7 +149,7 @@ public class WifiAdapter extends BaseAdapter implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         int index = (int)view.getTag();
-        ScanResult s_result = mScanList.get(index);
+        ScanResult s_result = mShowWifiList.get(index);
         String SSID = s_result.SSID;
         String curBSSID = mWiFiAdmin.getConnectedBSSID(mContext);
         if (curBSSID.equals(s_result.BSSID)) { // 当前已连接，需要断开

@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.sindia.pdm3000.adapter.BleDeviceAdapter;
 import com.sindia.pdm3000.adapter.WifiAdapter;
 import com.sindia.pdm3000.ble.BleManager;
-import com.sindia.pdm3000.http.OkHttpHelper;
+import com.sindia.pdm3000.http.PdHttpRequest;
 import com.sindia.pdm3000.util.BluetoothUtil;
 import com.sindia.pdm3000.util.LocationUtil;
 import com.sindia.pdm3000.util.WifiAdmin;
@@ -235,8 +235,8 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
                 buttonScanClick(null);
             }
         }, 2000);
-/*
-        String url = "https://hq.sinajs.cn/list=sh600028";
+
+        /*String url = "https://hq.sinajs.cn/list=sh600028";
         boolean b = OkHttpHelper.requestHttp(url, new OkHttpHelper.OkHttpCallback() {
             @Override
             public void onHttpRespond(int code, String body) {
@@ -259,10 +259,27 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
         }
         // 无线相关的
         if (mWiFiAdmin.checkScanWifis(this)) {
-            mWifiAdapter.mScanList = mWiFiAdmin.getWifiList();
+            mWifiAdapter.updateWifiList(mWiFiAdmin.getWifiList());
             mWifiListView.setAdapter(mWifiAdapter);
             // 更新无线按钮状态
             UpdateActivityControls();
+        }
+        // 定时发送http心跳
+        if (mWifiAdapter.hasConnectedSindiaWifi()) {
+            if (PdHttpRequest.shouldPostHeartBeat()) {
+                PdHttpRequest.postHeartBeat(new PdHttpRequest.Callback() {
+                    @Override
+                    public void onResponse(PdHttpRequest.ResponseBase resp) {
+
+                    }
+                });
+                /*PdHttpRequest.postHeartBeat(new )
+                    @Override
+                    public void onPdHttpRespond(PdHttpRequest.ResponseBase resp) {
+
+                    }
+                });*/
+            }
         }
     }
 

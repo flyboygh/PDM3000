@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
     private static final int kMainTimerID = 101;
     private static final long kMainTimerDelay = 1000;
     private Handler mTimerHandler;
+    // 导航栏等控件
+    private MainNavigation mMainNavigation;      // 调用自定义Navigation的Java类
     // 状态相关的
     private boolean mForegndInit = false; // 是否已完成前台状态下的初始化
     private boolean mBleScanning = false; // 低功耗是否正在扫描
@@ -57,9 +59,35 @@ public class MainActivity extends AppCompatActivity implements BluetoothUtil.Blu
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+/*
+        // 隐藏标题栏
+        requestWindowFeature(FEATURE_NO_TITLE);
+        // 隐藏状态栏
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+*/
         setContentView(R.layout.activity_main);
 
+        // 导航和标题相关的
         setTitle(R.string.app_title);
+
+        mMainNavigation = (MainNavigation) super.findViewById(R.id.naviMain);
+        mMainNavigation.setTitle(getString(R.string.app_title));
+        // Java中叫回调，iOS中叫Block
+        mMainNavigation.setClickCallback(new MainNavigation.ClickCallback() {
+             // 返回按钮
+             @Override
+             public void onBackClick() {
+                 System.out.println("返回按钮");
+                 System.out.println("写你的逻辑呗~");
+             }
+             // 右侧按钮
+             @Override
+             public void onRightClick() {
+                 System.out.println("右侧按钮");
+                 System.out.println("写你的逻辑呗~");
+             }
+         });
 
         //禁止旋转（在xml写了）
         //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

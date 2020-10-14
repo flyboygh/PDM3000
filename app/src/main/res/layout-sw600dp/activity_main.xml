@@ -127,4 +127,10 @@
         app:layout_constraintStart_toEndOf="@+id/buttonScan"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.sindia.pdm3000.MainNavigation
+        android:id="@+id/naviMain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

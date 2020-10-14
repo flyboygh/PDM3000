@@ -1,5 +1,7 @@
 package com.sindia.pdm3000.http;
 
+import org.json.JSONObject;
+
 // http业务请求类
 public class PdHttpRequest extends OkHttpHelper {
     // 常量定义
@@ -18,7 +20,7 @@ public class PdHttpRequest extends OkHttpHelper {
 
     // 请求响应回调（测试接口）
     public interface Callback {
-        public void onResponse(ResponseBase resp);
+        void onResponse(ResponseBase resp);
     }
 
     // 是否到了发送心跳包的时间
@@ -34,8 +36,24 @@ public class PdHttpRequest extends OkHttpHelper {
 
     // 发送心跳
     public static boolean postHeartBeat(final Callback callback) {
+        String body = null;
+        try {
+            // 组json包
+            JSONObject rootObject = new JSONObject();
+            rootObject.put("type", 1);
+            rootObject.put("name", "123");
+            JSONObject obj = new JSONObject("{name1:value1,name2:value2}");
+            rootObject.put("data", obj);
+
+            body = rootObject.toString();
+            //JsonWriter writer = new JsonWriter();
+
+        } catch (Exception e) {
+
+        }
+
         mLastRespondMillis = -1;
-        boolean b = postHttpRequest(kServiceURL, "", new OkHttpCallback() {
+        boolean b = postHttpRequest(kServiceURL, body, new OkHttpCallback() {
             @Override
             public void onHttpRespond(int code, String body) {
                 ResponseBase resp = new ResponseBase();

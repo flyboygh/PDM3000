@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -37,9 +38,13 @@ public class SystemFragment extends Fragment implements BluetoothUtil.BluetoothS
     private static final long kMainTimerDelay = 1000;
     private Handler mTimerHandler;
     // 状态相关的
+    private boolean mHttpConnected = false; // 上次HTTP状态是否正常
     private boolean mForegndInit = false; // 是否已完成前台状态下的初始化
     private boolean mBleScanning = false; // 低功耗是否正在扫描
     private int mBleScanRemainS = 0; // 低功耗扫描剩余秒数
+    // 导航上的控件
+    private ImageButton mWifiImageBtn;
+    private ImageButton mConnImageBtn;
     // 蓝牙相关的
     private Button mScanBleButton;
     private TextView mCountDownTextView;
@@ -88,6 +93,8 @@ public class SystemFragment extends Fragment implements BluetoothUtil.BluetoothS
         //}
 
         // 常用控件赋值区
+        mWifiImageBtn = getActivity().findViewById(R.id.imageButtonWifiStatus);
+        mConnImageBtn = getActivity().findViewById(R.id.imageButtonConnStatus);
         mScanBleButton = root.findViewById(R.id.buttonScanBle);
         mOpenWifiButton = root.findViewById(R.id.buttonOpenWifi);
         mCountDownTextView = root.findViewById(R.id.textViewCountDown);
@@ -312,22 +319,36 @@ public class SystemFragment extends Fragment implements BluetoothUtil.BluetoothS
                 // 更新无线按钮状态
                 updateActivityControls();
             }
-            // 定时发送http心跳
-            if (mWifiAdapter.hasConnectedSindiaWifi()) {
-                if (PdHttpRequest.shouldPostHeartBeat()) {
-                    PdHttpRequest.postHeartBeat(new PdHttpRequest.Callback() {
-                        @Override
-                        public void onResponse(PdHttpRequest.ResponseBase resp) {
-
-                        }
-                    });
-                    /*PdHttpRequest.postHeartBeat(new )
-                        @Override
-                        public void onPdHttpRespond(PdHttpRequest.ResponseBase resp) {
-
-                        }
-                    });*/
+            boolean postHeartBeat = false; // 是否强制post心跳
+            boolean httpConnected = mWifiAdapter.hasConnectedSindiaWifi(); // 是否已连接了有效wifi
+            if (mHttpConnected != httpConnected) { // WIFI连接发生了变化
+                mHttpConnected = httpConnected;
+                if (httpConnected) { // 刚刚连接
+                    mWifiImageBtn.setBackgroundResource(R.drawable.icon_has_wifi);
+                } else { // 刚刚无连接
+                    mWifiImageBtn.setBackgroundResource(R.drawable.icon_no_wifi);
                 }
+                postHeartBeat = true;
+            }
+            if (postHeartBeat || (httpConnected && PdHttpRequest.shouldPostHeartBeat())) {
+                // 定时发送http心跳
+                PdHttpRequest.postHeartBeat(new PdHttpRequest.Callback() {
+                    @Override
+                    public void onResponse(PdHttpRequest.ResponseBase resp) {
+
+                    }
+                });
+                /*PdHttpRequest.postHeartBeat(new )
+                    @Override
+                    public void onPdHttpRespond(PdHttpRequest.ResponseBase resp) {
+
+                    }
+                });*/
+            }
+            if (PdHttpRequest.isHttpConnected()) {
+                mConnImageBtn.setBackgroundResource(R.drawable.icon_connected);
+            } else {
+                mConnImageBtn.setBackgroundResource(R.drawable.icon_disconnect);
             }
         }
     }

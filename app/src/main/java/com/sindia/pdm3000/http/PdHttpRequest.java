@@ -7,10 +7,11 @@ public class PdHttpRequest extends OkHttpHelper {
     // 常量定义
     //private static final String kServiceURL = "https://192.168.1.108";
     private static final String kServiceURL = "https://hq.sinajs.cn/list=sh600028";// 这个是测试用的
-    private static final long kHeartBeatIntervalMillis = 10000;// 30000; // 发送心跳的间隔时间
+    private static final long kHeartBeatIntervalMillis = 5000;//10000;// 30000; // 发送心跳的间隔时间
 
     // 普通成员
     private static long mLastRespondMillis = 0; // 最后一次响应或超时的时间，-1表示正在发送中
+    private static boolean mIsHttpConnected = false; // 当前连接状态是否正常
 
     // 请求响应基类
     public static class ResponseBase {
@@ -21,6 +22,11 @@ public class PdHttpRequest extends OkHttpHelper {
     // 请求响应回调（测试接口）
     public interface Callback {
         void onResponse(ResponseBase resp);
+    }
+
+    // 当前HTTP是否连通
+    public static boolean isHttpConnected() {
+        return mIsHttpConnected;
     }
 
     // 是否到了发送心跳包的时间
@@ -36,7 +42,7 @@ public class PdHttpRequest extends OkHttpHelper {
 
     // 发送心跳
     public static boolean postHeartBeat(final Callback callback) {
-        String body = null;
+        String body = "";//null;
         try {
             // 组json包
             JSONObject rootObject = new JSONObject();
@@ -45,7 +51,7 @@ public class PdHttpRequest extends OkHttpHelper {
             JSONObject obj = new JSONObject("{name1:value1,name2:value2}");
             rootObject.put("data", obj);
 
-            body = rootObject.toString();
+            //body = rootObject.toString();
             //JsonWriter writer = new JsonWriter();
 
         } catch (Exception e) {
@@ -58,12 +64,25 @@ public class PdHttpRequest extends OkHttpHelper {
             public void onHttpRespond(int code, String body) {
                 ResponseBase resp = new ResponseBase();
                 resp.respCode = code;
-                resp.isSucc = ( code == 200 );
+                if (code == 200) {
+                    resp.isSucc = true;
+                    mIsHttpConnected = true;
+                } else {
+                    resp.isSucc = false;
+                    mIsHttpConnected = false;
+                }
                 callback.onResponse(resp);
-                // 设置最后一次成员的时钟
+                // 设置最后一次成功的时钟
                 mLastRespondMillis = System.currentTimeMillis();
             }
         });
+        /*if (!b) {
+            mIsHttpConnected = false;
+            ResponseBase resp = new ResponseBase();
+            resp.respCode = -1;
+            resp.isSucc = false;
+            callback.onResponse(resp);
+        }*/
         return b;
     }
 }

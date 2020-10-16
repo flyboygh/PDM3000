@@ -513,18 +513,17 @@ public class WifiAdmin {
     }
 
     // 连接指定WIFI
-    public boolean connectWifiBySSID(Context context, String SSID) {
+    public boolean connectWifiBySSID(Context context, String SSID, String PSWD) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) { // 29
             mWifiManager.disconnect(); // 加这一句就能断开当前连接
             int networkId = -1;
             WifiConfiguration wifiConf = getConfigBySSID(SSID);
-            if (wifiConf != null) {
+            if (wifiConf != null) { // 已在缓存中的WIFI
                 networkId = wifiConf.networkId;
-            } else {
-                String pwd = "39vu2jhh";
+            } else { // 缓存中没有，需要新建配置
                 WifiConfiguration wifiCong = new WifiConfiguration();
                 wifiCong.SSID = "\"" + SSID + "\"";// \"转义字符，代表"
-                wifiCong.preSharedKey = "\"" + pwd + "\"";// WPA-PSK密码
+                wifiCong.preSharedKey = "\"" + PSWD + "\"";// WPA-PSK密码
                 wifiCong.hiddenSSID = false;
                 wifiCong.status = WifiConfiguration.Status.ENABLED;
                 networkId = mWifiManager.addNetwork(wifiCong);// 将配置好的特定WIFI密码信息添加,添加完成后默认是不激活状态，成功返回ID，否则为-1
@@ -539,7 +538,7 @@ public class WifiAdmin {
         } else {
             NetworkSpecifier specifier = new WifiNetworkSpecifier.Builder()
                             .setSsidPattern(new PatternMatcher(SSID, PatternMatcher.PATTERN_PREFIX))
-                            .setWpa2Passphrase("")//39vu2jhh")//WiFi密码
+                            .setWpa2Passphrase(PSWD)//WiFi密码
                             .build();
 
             NetworkRequest request = new NetworkRequest.Builder()
@@ -559,11 +558,13 @@ public class WifiAdmin {
                 @Override
                 public void onAvailable(Network network) {
                     // do success processing here..
+                    Log.d("", "wifi available");
                 }
 
                 @Override
                 public void onUnavailable() {
                     // do failure processing here..
+                    Log.d("", "wifi unavailable");
                 }
             };
             connectivityManager.requestNetwork(request, networkCallback);
@@ -593,6 +594,13 @@ public class WifiAdmin {
             if (networkType == ConnectivityManager.TYPE_WIFI) {
             } else if (networkType == ConnectivityManager.TYPE_MOBILE) {
             }
+            // 下面都不好用
+            /*WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+            if (wifiInfo != null) {
+                mWifiManager.disableNetwork(wifiInfo.getNetworkId());
+            }
+            mWifiManager.disconnect(); // 这个在android9上会弹一次提示 // 加这一句就能断开当前连接
+             */
         }
         return false;
     }

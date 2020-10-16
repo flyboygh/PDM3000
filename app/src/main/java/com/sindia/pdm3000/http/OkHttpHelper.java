@@ -44,22 +44,24 @@ public class OkHttpHelper {
                 Request request = new Request.Builder().url(url).post(requestBody).build();
 //我们创建了一个Request对象并设置为POST方法,把requestBody加入了它
 
+                int code = -1;
+                String result = "";
                 try {
                     Response response = client.newCall(request).execute();
-                    int code = response.code();
-                    String result = response.body().string();//获得String对象
+                    code = response.code();
+                    result = response.body().string();//获得String对象
                     //byte[] byteData = response.body().bytes();//获得byte对象
                     //InputStream is = response.body().byteStream();//获得输入流
 
                     //String s = String.valueOf(response.body());
                     //Log.i("", s);
-                    callback.onHttpRespond(code, result);
-                } catch (IOException e) {
+                } catch (IOException e) { // 无网络会到这里
                     Log.e("", e.getMessage());
                 }
+                callback.onHttpRespond(code, result);
             }
         }).start();
-        return false;
+        return true;
     }
 
     // 请求响应回调（测试接口）

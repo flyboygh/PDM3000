@@ -1,5 +1,6 @@
 package com.sindia.pdm3000.adapter;
 
+import android.graphics.Color;
 import android.net.wifi.ScanResult;
 import android.content.Context;
 import android.net.wifi.WifiManager;
@@ -20,6 +21,8 @@ import java.util.List;
 // 无线网记录适配类
 public class WifiAdapter extends BaseAdapter implements View.OnClickListener {
     private static final String kSindiaWifiPrefix = "SINDIA"; // 兴迪3000无线网前缀
+    private static final String kSindiaWifiPrefix2 = "USR-WIFI"; // 兴迪3000无线网前缀
+    private static final String kSindiaWifiPasswd = "wifi@sindia.cn"; // 兴迪3000无线网密码
 
     private Context mContext = null;
     private Callback mCallback = null;
@@ -68,19 +71,29 @@ public class WifiAdapter extends BaseAdapter implements View.OnClickListener {
     // 是否连接到了兴迪无线网
     public boolean hasConnectedSindiaWifi() {
         String curSSID = mWiFiAdmin.getConnectedSSID(mContext);
-        if (curSSID.toUpperCase().startsWith(kSindiaWifiPrefix)) {
+        if (isSindiaWifi(curSSID)) {
             return true;
         }
         return false;
     }
 
     // 下面是内部工具方法
+    private boolean isSindiaWifi(String ssid) {
+        if (ssid.toUpperCase().startsWith(kSindiaWifiPrefix)) {
+            return true;
+        }
+        if (ssid.toUpperCase().startsWith(kSindiaWifiPrefix2)) {
+            return true;
+        }
+        return false;
+    }
+
     private int getWifiSortInt(final ScanResult s_result) {
         String curBSSID = mWiFiAdmin.getConnectedBSSID(mContext);
         if (curBSSID.equals(s_result.BSSID)) {
             return 2;
         }
-        if (s_result.SSID.toUpperCase().startsWith(kSindiaWifiPrefix)) {
+        if (isSindiaWifi(s_result.SSID)) {
             return 1;
         }
         return 0;
@@ -110,6 +123,11 @@ public class WifiAdapter extends BaseAdapter implements View.OnClickListener {
         ScanResult s_result = mShowWifiList.get(i);
         String ssid = s_result.SSID;
         if (ssid != null) {
+            if (isSindiaWifi(ssid)) {
+                txt_aName.getPaint().setFakeBoldText(true);
+            } else {
+                txt_aName.getPaint().setFakeBoldText(false);
+            }
             txt_aName.setText(ssid);
         } else { // 内错
             Log.e("内错", "getView中ssid为空");
@@ -123,11 +141,14 @@ public class WifiAdapter extends BaseAdapter implements View.OnClickListener {
         if (curBSSID.equals(s_result.BSSID)) {
             if (wifiState == WifiManager.WIFI_STATE_ENABLED) {
                 btnConnect.setText(R.string.disconn);
+                txt_aName.setTextColor(Color.BLUE);
             } else {
                 btnConnect.setText(R.string.connecting);
+                txt_aName.setTextColor(Color.RED);
             }
         } else {
             btnConnect.setText(R.string.connect);
+            txt_aName.setTextColor(Color.BLACK);
         }
         /*Button btnConnect = view.findViewById(R.id.buttonConnect);
         if (mConnDevice != null) {
@@ -156,7 +177,11 @@ public class WifiAdapter extends BaseAdapter implements View.OnClickListener {
             mWiFiAdmin.disconnWifiBySSID(mContext, SSID);
             //mCallback.connectWifiClick(SSID);
         } else {
-            mWiFiAdmin.connectWifiBySSID(mContext, SSID);
+            String PSWD = "";
+            if (isSindiaWifi(SSID)) {
+                PSWD = kSindiaWifiPasswd;
+            }
+            mWiFiAdmin.connectWifiBySSID(mContext, SSID, PSWD);
             //mCallback.connectWifiClick(SSID);
         }
     }

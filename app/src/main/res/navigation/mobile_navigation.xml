@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/bottom_menu_system">
+
+    <fragment
+        android:id="@+id/bottom_menu_system"
+        android:name="com.sindia.pdm3000.SystemFragment"
+        android:label="@string/net_status"
+        tools:layout="@layout/fragment_system" />
+
+    <fragment
+        android:id="@+id/bottom_menu_config"
+        android:name="com.sindia.pdm3000.ConfigFragment"
+        android:label="@string/param_set"
+        tools:layout="@layout/fragment_config" />
+
+</navigation>

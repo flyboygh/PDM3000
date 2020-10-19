@@ -2,9 +2,11 @@ package com.sindia.pdm3000;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -48,6 +50,11 @@ public class MainActivity extends AppCompatActivity {// implements BottomNavigat
         // 底部导航
         mBottomNavView = findViewById(R.id.bottom_nav_view);
         mBottomNavView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        //获取底部导航图标颜色，根据图标颜色设置文字颜色
+        //Resources resource = getResources();
+        ColorStateList csl = ContextCompat.getColorStateList(this, R.color.selector_color);// resource.getColorStateList(R.color.selector_color);
+        mBottomNavView.setItemTextColor(csl);
 
         // 创建所有flagment
         mSystemFragment = new SystemFragment();

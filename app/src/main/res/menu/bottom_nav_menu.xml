@@ -3,22 +3,22 @@
 
     <item
         android:id="@+id/bottom_menu_system"
-        android:icon="@drawable/ic_home_black_24dp"
-        android:title="@string/net_status" />
+        android:icon="@drawable/ic_baseline_cast_connected_24"
+        android:title="@string/device_conn" />
 
     <item
         android:id="@+id/bottom_menu_param_set"
-        android:icon="@drawable/ic_dashboard_black_24dp"
+        android:icon="@drawable/ic_baseline_save_24"
         android:title="@string/param_set" />
 
     <item
         android:id="@+id/bottom_menu_data_read"
-        android:icon="@drawable/ic_notifications_black_24dp"
+        android:icon="@drawable/ic_baseline_archive_24"
         android:title="@string/data_read" />
 
     <item
         android:id="@+id/bottom_menu_data_view"
-        android:icon="@drawable/ic_dashboard_black_24dp"
+        android:icon="@drawable/ic_baseline_photo_library_24"
         android:title="@string/data_view" />
 
 </menu>

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">PDM3000</string>
     <string name="app_title">可移动式电缆局部放电检测系统</string>
-    <string name="net_status">网络状态</string>
+    <string name="device_conn">设备检测</string>
     <string name="param_set">参数设置</string>
     <string name="data_read">数据读取</string>
     <string name="data_view">数据展示</string>

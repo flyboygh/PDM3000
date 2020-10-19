@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/bottom_menu_system"
         android:name="com.sindia.pdm3000.SystemFragment"
-        android:label="@string/net_status"
+        android:label="@string/device_conn"
         tools:layout="@layout/fragment_system" />
 
     <fragment

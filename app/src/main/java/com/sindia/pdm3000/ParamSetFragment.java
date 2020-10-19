@@ -8,13 +8,13 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
 
-public class ConfigFragment extends Fragment {
+public class ParamSetFragment extends Fragment {
     //private ConfigViewModel configViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         //configViewModel = ViewModelProviders.of(this).get(ConfigViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_config, container, false);
+        View root = inflater.inflate(R.layout.fragment_param_set, container, false);
         /*final TextView textView = root.findViewById(R.id.text_home);
         configViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override

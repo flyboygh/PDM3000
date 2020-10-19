@@ -12,9 +12,9 @@
         tools:layout="@layout/fragment_system" />
 
     <fragment
-        android:id="@+id/bottom_menu_config"
-        android:name="com.sindia.pdm3000.ConfigFragment"
+        android:id="@+id/bottom_menu_param_set"
+        android:name="com.sindia.pdm3000.ParamSetFragment"
         android:label="@string/param_set"
-        tools:layout="@layout/fragment_config" />
+        tools:layout="@layout/fragment_param_set" />
 
 </navigation>

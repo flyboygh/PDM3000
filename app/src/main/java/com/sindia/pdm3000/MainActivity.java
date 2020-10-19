@@ -16,7 +16,9 @@ public class MainActivity extends AppCompatActivity {// implements BottomNavigat
 
     // 中间容器及片段
     private SystemFragment mSystemFragment;
-    private ConfigFragment mConfigFragment;
+    private ParamSetFragment mParamSetFragment;
+    private DataReadFragment mDataReadFragment;
+    private DataViewFragment mDataViewFragment;
     private Fragment[] mAllFragments;
     private int mLastFragment;//用于记录上个选择的Fragment
 
@@ -39,7 +41,7 @@ public class MainActivity extends AppCompatActivity {// implements BottomNavigat
         //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         // 创建顶部主导航
-        mMainNavigation = (MainNavigation) super.findViewById(R.id.naviMain);
+        mMainNavigation = super.findViewById(R.id.naviMain);
         mMainNavigation.setTitle(getString(R.string.app_title));
         mMainNavigation.setClickCallback(mMainNavigationCallBack); // Java中叫回调，iOS中叫Block
 
@@ -49,8 +51,10 @@ public class MainActivity extends AppCompatActivity {// implements BottomNavigat
 
         // 创建所有flagment
         mSystemFragment = new SystemFragment();
-        mConfigFragment = new ConfigFragment();
-        mAllFragments = new Fragment[]{mSystemFragment, mConfigFragment};
+        mParamSetFragment = new ParamSetFragment();
+        mDataReadFragment = new DataReadFragment();
+        mDataViewFragment = new DataViewFragment();
+        mAllFragments = new Fragment[]{mSystemFragment, mParamSetFragment, mDataReadFragment, mDataViewFragment};
         mLastFragment = 0;
 
         // 显示最左侧的页签视图
@@ -97,13 +101,29 @@ public class MainActivity extends AppCompatActivity {// implements BottomNavigat
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.bottom_menu_system: {
+                    mMainNavigation.setTitle(getString(R.string.app_title));
                     if (switchFragmentByIndex(0)) {
                         return true;
                     }
                     break;
                 }
-                case R.id.bottom_menu_config: {
+                case R.id.bottom_menu_param_set: {
+                    mMainNavigation.setTitle(getString(R.string.pd_param_set));
                     if (switchFragmentByIndex(1)) {
+                        return true;
+                    }
+                    break;
+                }
+                case R.id.bottom_menu_data_read: {
+                    mMainNavigation.setTitle(getString(R.string.pd_data_read));
+                    if (switchFragmentByIndex(2)) {
+                        return true;
+                    }
+                    break;
+                }
+                case R.id.bottom_menu_data_view: {
+                    mMainNavigation.setTitle(getString(R.string.pd_data_view));
+                    if (switchFragmentByIndex(3)) {
                         return true;
                     }
                     break;

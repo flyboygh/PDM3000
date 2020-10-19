@@ -3,6 +3,11 @@
     <string name="app_title">可移动式电缆局部放电检测系统</string>
     <string name="net_status">网络状态</string>
     <string name="param_set">参数设置</string>
+    <string name="data_read">数据读取</string>
+    <string name="data_view">数据展示</string>
+    <string name="pd_param_set">局放检测参数设置</string>
+    <string name="pd_data_read">局放数据读取</string>
+    <string name="pd_data_view">局放数据展示</string>
     <string name="file_copy">文件复制</string>
     <string name="file_view">文件浏览</string>
     <string name="device_list">设备列表：</string>

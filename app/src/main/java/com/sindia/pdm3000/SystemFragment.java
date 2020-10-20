@@ -330,7 +330,7 @@ public class SystemFragment extends Fragment implements BluetoothUtil.BluetoothS
                 }
                 postHeartBeat = true;
             }
-            if (postHeartBeat || (httpConnected && PdHttpRequest.shouldPostHeartBeat())) {
+            /*if (postHeartBeat || (httpConnected && PdHttpRequest.shouldPostHeartBeat())) {
                 // 定时发送http心跳
                 PdHttpRequest.postHeartBeat(new PdHttpRequest.Callback() {
                     @Override
@@ -338,13 +338,7 @@ public class SystemFragment extends Fragment implements BluetoothUtil.BluetoothS
 
                     }
                 });
-                /*PdHttpRequest.postHeartBeat(new )
-                    @Override
-                    public void onPdHttpRespond(PdHttpRequest.ResponseBase resp) {
-
-                    }
-                });*/
-            }
+            }*/
             if (PdHttpRequest.isHttpConnected()) {
                 mConnImageBtn.setBackgroundResource(R.drawable.icon_connected);
             } else {

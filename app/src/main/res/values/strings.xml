@@ -21,4 +21,7 @@
     <string name="disconn">断开</string>
     <string name="activate">激活</string>
     <string name="stop_afterS">%d秒后停止</string>
+    <string name="line_name_">线路名称：</string>
+    <string name="line_pos_">检测位置：</string>
+    <string name="measure_time_">测量时间：</string>
 </resources>

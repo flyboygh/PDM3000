@@ -50,8 +50,30 @@ public class MainActivity extends AppCompatActivity {// implements BottomNavigat
         // 底部导航
         mBottomNavView = findViewById(R.id.bottom_nav_view);
         mBottomNavView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-        //获取底部导航图标颜色，根据图标颜色设置文字颜色
+/*
+        // 网上找的，去掉对于的效果
+        BottomNavigationMenuView menuView = (BottomNavigationMenuView) mBottomNavView.getChildAt(0);
+        try {
+            Field shiftingMode = menuView.getClass().getDeclaredField("mShiftingMode");
+            shiftingMode.setAccessible(true);
+            shiftingMode.setBoolean(menuView, false);
+            shiftingMode.setAccessible(false);
+            for (int i = 0; i < menuView.getChildCount(); i++) {
+                BottomNavigationItemView item = (BottomNavigationItemView) menuView.getChildAt(i);
+                //noinspection RestrictedApi
+                //item.setShifting(false);
+                //item.setShiftingMode(false);
+                // set once again checked value, so view will be updated
+                //noinspection RestrictedApi
+                //item.setChecked(item.getItemData().isChecked());
+            }
+        } catch (NoSuchFieldException e) {
+            //Log.e("BNVHelper", "Unable to get shift mode field", e);
+        } catch (IllegalAccessException e) {
+            //Log.e("BNVHelper", "Unable to change value of shift mode", e);
+        }
+*/
+    //获取底部导航图标颜色，根据图标颜色设置文字颜色
         //Resources resource = getResources();
         ColorStateList csl = ContextCompat.getColorStateList(this, R.color.selector_color);// resource.getColorStateList(R.color.selector_color);
         mBottomNavView.setItemTextColor(csl);

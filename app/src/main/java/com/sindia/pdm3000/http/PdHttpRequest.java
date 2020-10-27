@@ -5,8 +5,8 @@ import org.json.JSONObject;
 // http业务请求类
 public class PdHttpRequest extends OkHttpHelper {
     // 常量定义
-    //private static final String kServiceURL = "https://192.168.1.108";
-    private static final String kServiceURL = "https://hq.sinajs.cn/list=sh600028";// 这个是测试用的
+    private static final String kServiceURL = "http://192.168.1.100:8080";
+    //private static final String kServiceURL = "https://hq.sinajs.cn/list=sh600028";// 这个是测试用的
     private static final long kHeartBeatIntervalMillis = 5000;//10000;// 30000; // 发送心跳的间隔时间
 
     // 普通成员
@@ -51,7 +51,7 @@ public class PdHttpRequest extends OkHttpHelper {
             JSONObject obj = new JSONObject("{name1:value1,name2:value2}");
             rootObject.put("data", obj);
 
-            //body = rootObject.toString();
+            body = rootObject.toString();
             //JsonWriter writer = new JsonWriter();
 
         } catch (Exception e) {

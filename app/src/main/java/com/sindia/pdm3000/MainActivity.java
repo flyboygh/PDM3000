@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {// implements BottomNavigat
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 */
-        setContentView(R.layout.activity_main); // test push code
+        setContentView(R.layout.activity_main); // test push code, test push code
 
         //禁止旋转（在xml写了）
         //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

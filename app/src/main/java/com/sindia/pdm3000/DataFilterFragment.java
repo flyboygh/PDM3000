@@ -32,12 +32,12 @@ import java.util.Locale;
 public class DataFilterFragment extends Fragment implements AdapterView.OnItemSelectedListener, View.OnTouchListener {
 
     private Spinner mLineNameSpinner;
-    private Spinner mLinePosSpinner;
+    private Spinner mJointNameSpinner;
     private EditText mStartDateEdit;
     private EditText mEndDateEdit;
 
     List<String> mLineNameList;
-    List<String> mLinePosList;
+    List<String> mJointNameList;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -45,13 +45,13 @@ public class DataFilterFragment extends Fragment implements AdapterView.OnItemSe
 
         // 控件赋值
         mLineNameSpinner = root.findViewById(R.id.spinnerLineName);
-        mLinePosSpinner = root.findViewById(R.id.spinnerLinePos);
+        mJointNameSpinner = root.findViewById(R.id.spinnerJointName);
         mStartDateEdit = root.findViewById(R.id.editTextStartDate);
         mEndDateEdit = root.findViewById(R.id.editTextEndDate);
 
         // 控件初始化
         mLineNameSpinner.setOnItemSelectedListener(this);
-        mLinePosSpinner.setOnItemSelectedListener(this);
+        mJointNameSpinner.setOnItemSelectedListener(this);
         mStartDateEdit.setOnTouchListener(this);
         mEndDateEdit.setOnTouchListener(this);
 
@@ -65,7 +65,7 @@ public class DataFilterFragment extends Fragment implements AdapterView.OnItemSe
         PropertyHelper helper = new PropertyHelper(context);
         helper.loadFromFile("data_filter.prop");
         String lineName = helper.getString("line_name");
-        String linePos = helper.getString("line_pos");
+        String jointName = helper.getString("joint_name");
         String startDate = helper.getString("start_date");
         String endDate = helper.getString("end_date");
 
@@ -73,8 +73,8 @@ public class DataFilterFragment extends Fragment implements AdapterView.OnItemSe
         int lineNameIndex = mLineNameList.indexOf(lineName);
         mLineNameSpinner.setSelection(lineNameIndex, false);
 
-        int linePosIndex = mLineNameList.indexOf(linePos);
-        mLinePosSpinner.setSelection(linePosIndex, false);
+        int jointNameIndex = mLineNameList.indexOf(jointName);
+        mJointNameSpinner.setSelection(jointNameIndex, false);
 
         final Calendar calendar = Calendar.getInstance(Locale.CHINA);
         if (startDate.isEmpty()) {
@@ -94,13 +94,13 @@ public class DataFilterFragment extends Fragment implements AdapterView.OnItemSe
         int id = adapterView.getId();
         if (id == R.id.spinnerLineName) {// adapterView.equals(mLineNameSpinner)) { // 线路名称
             String lineName = (String) mLineNameSpinner.getSelectedItem();
-            mLinePosList = PDFileUtil.getLinePosNames(getActivity(), lineName);
-            ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.spinitem_common, R.id.textViewTitle, mLinePosList);
-            mLinePosSpinner.setAdapter(adapter);
-            //mLinePosSpinner.setOnItemSelectedListener(this);
+            mJointNameList = PDFileUtil.getJointNames(getActivity(), lineName);
+            ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.spinitem_common, R.id.textViewTitle, mJointNameList);
+            mJointNameSpinner.setAdapter(adapter);
+            //mJointNameSpinner.setOnItemSelectedListener(this);
 
             saveRuntimeProperties();
-        } else if (id == R.id.spinnerLinePos) {
+        } else if (id == R.id.spinnerJointName) {
             saveRuntimeProperties();
         }
     }
@@ -249,13 +249,13 @@ public class DataFilterFragment extends Fragment implements AdapterView.OnItemSe
     // 保存运行时的属性
     private void saveRuntimeProperties() {
         String lineName = (String) mLineNameSpinner.getSelectedItem();
-        String linePos = (String) mLinePosSpinner.getSelectedItem();
+        String jointName = (String) mJointNameSpinner.getSelectedItem();
         String startDate = mStartDateEdit.getText().toString();
         String endDate = mEndDateEdit.getText().toString();
 
         PropertyHelper helper = new PropertyHelper(getContext());
         helper.setString("line_name", lineName);
-        helper.setString("line_pos", linePos);
+        helper.setString("joint_name", jointName);
         helper.setString("start_date", startDate);
         helper.setString("end_date", endDate);
         helper.saveToFile("data_filter.prop");

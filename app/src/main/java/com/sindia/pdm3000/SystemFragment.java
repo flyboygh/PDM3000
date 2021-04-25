@@ -332,7 +332,7 @@ public class SystemFragment extends Fragment implements BluetoothUtil.BluetoothS
             }
             if (postHeartBeat || (httpConnected && PdHttpRequest.shouldPostHeartBeat())) {
                 // 定时发送http心跳
-                PdHttpRequest.postHeartBeat(new PdHttpRequest.Callback() {
+                PdHttpRequest.doPostHeartBeat(new PdHttpRequest.Callback() {
                     @Override
                     public void onResponse(PdHttpRequest.ResponseBase resp) {
 

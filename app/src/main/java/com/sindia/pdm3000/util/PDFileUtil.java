@@ -17,7 +17,7 @@ public class PDFileUtil {
     }
 
     // 取得线路接头数组
-    public static List<String> getLinePosNames(Context context, String lineName) {
+    public static List<String> getJointNames(Context context, String lineName) {
         String path = kSyncDataPath + File.separator + lineName;
         return getFileNames(context, path);
     }
@@ -30,10 +30,12 @@ public class PDFileUtil {
         List<String> list = new ArrayList<>();
         File dataDir = new File(dataPath);
         File []lineNameFiles = dataDir.listFiles();
-        for (int i = 0; i < lineNameFiles.length; i++) {
-            File lineNameFile = lineNameFiles[i];
-            String s = lineNameFile.getName();
-            list.add(s);
+        if (lineNameFiles != null) {
+            for (int i = 0; i < lineNameFiles.length; i++) {
+                File lineNameFile = lineNameFiles[i];
+                String s = lineNameFile.getName();
+                list.add(s);
+            }
         }
         return list;
     }

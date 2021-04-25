@@ -24,4 +24,5 @@
     <string name="line_name_">线路名称：</string>
     <string name="line_pos_">检测位置：</string>
     <string name="measure_time_">测量时间：</string>
+    <string name="apply_change">应用修改</string>
 </resources>

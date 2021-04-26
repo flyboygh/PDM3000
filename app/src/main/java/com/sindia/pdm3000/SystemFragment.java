@@ -115,6 +115,7 @@ public class SystemFragment extends Fragment implements BluetoothUtil.BluetoothS
             }
         });
 
+
         // 蓝牙工具类
         _BluetoothUtil = new BluetoothUtil();
         _BluetoothUtil.mBluetoothCallback = this;

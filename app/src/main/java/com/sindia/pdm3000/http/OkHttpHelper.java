@@ -1,5 +1,7 @@
 package com.sindia.pdm3000.http;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import java.io.IOException;
@@ -58,7 +60,16 @@ public class OkHttpHelper {
                 } catch (IOException e) { // 无网络会到这里
                     Log.e("", e.getMessage());
                 }
-                callback.onHttpRespond(code, result);
+                final int f_code = code;
+                final String f_result = result;
+                Handler mainThread = new Handler(Looper.getMainLooper());
+                mainThread.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onHttpRespond(f_code, f_result);
+                        //callback.onHttpRespond(code, result);
+                    }
+                });
             }
         }).start();
         return true;

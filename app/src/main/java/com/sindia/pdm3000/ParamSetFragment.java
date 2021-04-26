@@ -3,6 +3,8 @@ package com.sindia.pdm3000;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ public class ParamSetFragment extends Fragment {
     private EditText mLineNameEdit;
     private EditText mJointNameEdit;
     private Button mApplyChangeButton;
+    private Button mReloadDataButton;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -27,6 +30,7 @@ public class ParamSetFragment extends Fragment {
         mLineNameEdit = root.findViewById(R.id.editTextLineName);
         mJointNameEdit = root.findViewById(R.id.editTextJointName);
         mApplyChangeButton = root.findViewById(R.id.buttonApplyChange);
+        mReloadDataButton = root.findViewById(R.id.buttonReloadData);
 
         // 测试数据
         mLineNameEdit.setText("默认线路");
@@ -42,7 +46,36 @@ public class ParamSetFragment extends Fragment {
                 PdHttpRequest.doPostParamSet(paramSet, new PdHttpRequest.Callback() {
                     @Override
                     public void onResponse(PdHttpRequest.ResponseBase resp) {
-
+                        if (resp.errCode != 0) {
+                            String msg = String.format("未知错误：%d", resp.errCode);
+                            if (!resp.errMsg.isEmpty()) {
+                                msg = resp.errMsg;
+                            }
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                            builder.setTitle("错误")
+                                    .setMessage(msg)
+                                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                        }
+                                    })
+                                    .show();
+                        }
+                    }
+                });
+            }
+        });
+        mReloadDataButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PdHttpRequest.doGetParamSet(new PdHttpRequest.Callback() {
+                    @Override
+                    public void onResponse(PdHttpRequest.ResponseBase resp) {
+                        if (resp.errCode == 0) {
+                            PdHttpRequest.ParamSetResp paramSetResp = (PdHttpRequest.ParamSetResp)resp;
+                            mLineNameEdit.setText(paramSetResp.paramSet.lineName);
+                            mJointNameEdit.setText(paramSetResp.paramSet.jointName);
+                        }
                     }
                 });
             }

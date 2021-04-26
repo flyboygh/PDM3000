@@ -17,13 +17,14 @@ public class PdHttpRequest extends OkHttpHelper {
 
     // 请求响应基类
     public static class ResponseBase {
-        public int respCode; // 响应码
-        public boolean isSucc; // 是否成功
+        public int respCode; // 响应码（200-正常）
+        public int errCode; // 错误码（0-成功）
+        public String errMsg; // 错误信息
     }
 
-    //public static class ParamSetResp extends ResponseBase {
-    //    ParamSetData paramSet;
-    //}
+    public static class ParamSetResp extends ResponseBase {
+        public ParamSetData paramSet;
+    }
 
     // 请求响应回调（测试接口）
     public interface Callback {
@@ -72,10 +73,10 @@ public class PdHttpRequest extends OkHttpHelper {
                 ResponseBase resp = new ResponseBase();
                 resp.respCode = code;
                 if (code == 200) {
-                    resp.isSucc = true;
+                    resp.errCode = 0;
                     mIsHttpConnected = true;
                 } else {
-                    resp.isSucc = false;
+                    resp.errCode = -1;
                     mIsHttpConnected = false;
                 }
                 callback.onResponse(resp);
@@ -132,10 +133,17 @@ public class PdHttpRequest extends OkHttpHelper {
                 ResponseBase resp = new ResponseBase();
                 resp.respCode = code;
                 if (code == 200) {
-                    resp.isSucc = true;
+                    try {
+                        JSONObject rootObject = new JSONObject(body);
+                        //JSONObject dicData = rootObject.getJSONObject("data");
+                        resp.errCode = rootObject.getInt("errcode");
+                        resp.errMsg = rootObject.getString("errmsg");
+                    } catch (Exception e) {
+                        resp.errCode = -2;
+                    }
                     mIsHttpConnected = true;
                 } else {
-                    resp.isSucc = false;
+                    resp.errCode = -1;
                     mIsHttpConnected = false;
                 }
                 callback.onResponse(resp);
@@ -159,7 +167,7 @@ public class PdHttpRequest extends OkHttpHelper {
         try {
             // 组json包
             JSONObject rootObject = new JSONObject();
-            rootObject.put("type", 1);
+            rootObject.put("type", 11);
             rootObject.put("name", "123");
             JSONObject obj = new JSONObject("{name1:value1,name2:value2}");
             rootObject.put("data", obj);
@@ -175,13 +183,22 @@ public class PdHttpRequest extends OkHttpHelper {
         boolean b = postHttpRequest(kServiceURL, body, new OkHttpCallback() {
             @Override
             public void onHttpRespond(int code, String body) {
-                ResponseBase resp = new ResponseBase();
+                ParamSetResp resp = new ParamSetResp();
+                resp.paramSet = new ParamSetData();
                 resp.respCode = code;
                 if (code == 200) {
-                    resp.isSucc = true;
+                    try {
+                        JSONObject rootObject = new JSONObject(body);
+                        JSONObject dicData = rootObject.getJSONObject("data");
+                        resp.paramSet.lineName = dicData.getString("line_name");
+                        resp.paramSet.jointName = dicData.getString("joint_name");
+                        resp.errCode = 0;
+                    } catch (Exception e) {
+                        resp.errCode = -2;
+                    }
                     mIsHttpConnected = true;
                 } else {
-                    resp.isSucc = false;
+                    resp.errCode = -1;
                     mIsHttpConnected = false;
                 }
                 callback.onResponse(resp);

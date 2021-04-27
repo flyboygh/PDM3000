@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="FrequencyCenter">
+        <item>1MHz</item>
+        <item>2MHz</item>
+        <item>3MHz</item>
+        <item>4MHz</item>
+        <item>5MHz</item>
+        <item>6MHz</item>
+    </string-array>
+    <string-array name="FrequencyBandwidth">
+        <item>100kHHz</item>
+        <item>200kHz</item>
+        <item>300kHz</item>
+        <item>500kHz</item>
+        <item>1MHz</item>
+    </string-array>
+</resources>

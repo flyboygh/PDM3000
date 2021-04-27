@@ -25,7 +25,10 @@
     <string name="line_pos_">检测位置：</string>
     <string name="measure_time_">测量时间：</string>
     <string name="apply_change">应用修改</string>
+    <string name="load_config">获取配置</string>
     <string name="cable_info">被测电缆信息：</string>
     <string name="interval_time_set">间歇工作时间设置：</string>
     <string name="frequency_band_set">检测频带设置：</string>
+    <string name="freq_center">中心频点：</string>
+    <string name="freq_bandwidth">频率带宽：</string>
 </resources>

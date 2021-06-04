@@ -9,24 +9,24 @@
         android:id="@+id/textCableInfo3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="18dp"
         android:text="@string/frequency_band_set"
-        android:textColor="#2196F3"
+        android:textColor="@color/colorText"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView4"
         app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
     <TextView
         android:id="@+id/textCableInfo2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="18dp"
         android:text="@string/interval_time_set"
-        android:textColor="#2196F3"
+        android:textColor="@color/colorText"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView3"
         app:layout_constraintTop_toBottomOf="@+id/divider" />
 
     <EditText
@@ -38,7 +38,7 @@
         android:ems="10"
         android:inputType="textPersonName|text"
         android:text="Name"
-        android:textColor="#03A9F4"
+        android:textColor="@color/colorText"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textCableInfo" />
@@ -52,7 +52,7 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Name"
-        android:textColor="#03A9F4"
+        android:textColor="@color/colorText"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextLineName" />
@@ -61,18 +61,19 @@
         android:id="@+id/textCableInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
         android:text="@string/cable_info"
-        android:textColor="#2196F3"
+        android:textColor="@color/colorText"
+        android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView2"
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:id="@+id/divider"
         android:layout_width="409dp"
-        android:layout_height="1dp"
+        android:layout_height="8dp"
         android:layout_marginTop="5dp"
         android:background="?android:attr/listDivider"
         app:layout_constraintEnd_toEndOf="parent"
@@ -87,14 +88,14 @@
         android:layout_marginStart="21dp"
         android:layout_marginTop="44dp"
         android:text="秒"
-        android:textColor="#03A9F4"
+        android:textColor="@color/colorText"
         app:layout_constraintStart_toEndOf="@+id/editTextNumber"
         app:layout_constraintTop_toBottomOf="@+id/divider" />
 
     <View
         android:id="@+id/divider2"
         android:layout_width="409dp"
-        android:layout_height="1dp"
+        android:layout_height="8dp"
         android:layout_marginTop="12dp"
         android:background="?android:attr/listDivider"
         app:layout_constraintEnd_toEndOf="parent"
@@ -121,7 +122,7 @@
         android:layout_marginStart="56dp"
         android:layout_marginTop="15dp"
         android:text="@string/freq_center"
-        android:textColor="#2196F3"
+        android:textColor="@color/colorText"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textCableInfo3" />
@@ -133,7 +134,7 @@
         android:layout_marginStart="56dp"
         android:layout_marginTop="25dp"
         android:text="@string/freq_bandwidth"
-        android:textColor="#2196F3"
+        android:textColor="@color/colorText"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
@@ -186,37 +187,35 @@
             android:textColor="#FFFFFF" />
     </LinearLayout>
 
-    <View
-        android:id="@+id/divider3"
-        android:layout_width="409dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="12dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintEnd_toEndOf="parent"
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/vector_drawable_cable_info" />
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="248dp"
-        android:layout_height="156dp"
-        android:layout_marginTop="10dp"
-        android:background="#6699FF"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider3" />
+        app:layout_constraintTop_toBottomOf="@+id/divider"
+        app:srcCompat="@drawable/vector_drawable_time_set" />
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="80dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/btn_selector"
-        android:text="测试"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/divider2"
+        app:srcCompat="@drawable/vector_drawable_freq_set" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

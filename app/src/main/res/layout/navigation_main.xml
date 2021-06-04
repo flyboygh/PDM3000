@@ -35,8 +35,8 @@
 
     <ImageButton
         android:id="@+id/imageButtonWifiStatus"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_centerVertical="true"
         android:layout_marginEnd="8dp"
         android:layout_toStartOf="@+id/imageButtonConnStatus"
@@ -44,8 +44,8 @@
 
     <ImageButton
         android:id="@+id/imageButtonConnStatus"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="12dp"

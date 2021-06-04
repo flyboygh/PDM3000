@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item
-        android:id="@+id/bottom_menu_system"
-        android:icon="@drawable/ic_baseline_cast_connected_24"
-        android:title="@string/device_conn" />
-
     <item
         android:id="@+id/bottom_menu_param_set"
-        android:icon="@drawable/ic_baseline_save_24"
+        android:icon="@drawable/vector_drawable_param_setting"
         android:title="@string/param_set" />
 
     <item
         android:id="@+id/bottom_menu_data_read"
-        android:icon="@drawable/ic_baseline_archive_24"
+        android:icon="@drawable/vector_drawable_data_access"
         android:title="@string/data_read" />
 
     <item
         android:id="@+id/bottom_menu_data_view"
-        android:icon="@drawable/ic_baseline_photo_library_24"
+        android:icon="@drawable/vector_drawable_data_browse"
         android:title="@string/data_view" />
-
+    <item
+        android:id="@+id/bottom_menu_system"
+        android:icon="@drawable/vector_drawable_device_check"
+        android:title="@string/device_conn" />
 </menu>

@@ -90,8 +90,8 @@ public class MainActivity extends AppCompatActivity {// implements BottomNavigat
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         //transaction.add(R.id.fragment_parent_view, mSystemFragment);
         //transaction.add(R.id.fragment_parent_view, mConfigFragment);
-        transaction.replace(R.id.fragment_parent_view, mParamSetFragment)
-                .show(mParamSetFragment)
+        transaction.replace(R.id.fragment_parent_view, mSystemFragment)
+                .show(mSystemFragment)
                 .commit();
 /*
         // Passing each menu ID as a set of Ids because each

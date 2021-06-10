@@ -12,6 +12,7 @@
         <item name="android:windowNoTitle">true</item> <!--需要开这个，否则会显示默认顶部导航-->
         <item name="android:windowFullscreen">false</item> <!--不能开这个，否则系统标题文字会飞出去-->
         <item name="android:statusBarColor">@color/colorPrimary</item>
+        <item name="android:windowBackground">@color/colorBackground</item>
     </style>
 
 </resources>

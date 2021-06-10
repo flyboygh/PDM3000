@@ -114,9 +114,9 @@ public class PdHttpRequest extends OkHttpHelper {
             //byte[] b2 = s2.getBytes();
             obj.put("line_name", string1);// s1);
             obj.put("joint_name", string2);// s2);
-            obj.put("work_interval", 60);
-            obj.put("center_freq", 4.0);
-            obj.put("band_width", 300);
+            obj.put("work_interval",paramSet.work_interval);
+            obj.put("center_freq", paramSet.freq_center);
+            obj.put("band_width", paramSet.freq_width);
             rootObject.put("data", obj);
 
             body = rootObject.toString();
@@ -192,6 +192,9 @@ public class PdHttpRequest extends OkHttpHelper {
                         JSONObject dicData = rootObject.getJSONObject("data");
                         resp.paramSet.lineName = dicData.getString("line_name");
                         resp.paramSet.jointName = dicData.getString("joint_name");
+                        resp.paramSet.work_interval = Integer.valueOf(dicData.getString("work_interval"));
+                        resp.paramSet.freq_center = Integer.valueOf(dicData.getString("center_freq"));
+                        resp.paramSet.freq_width = Integer.valueOf(dicData.getString("band_width"));
                         resp.errCode = 0;
                     } catch (Exception e) {
                         resp.errCode = -2;

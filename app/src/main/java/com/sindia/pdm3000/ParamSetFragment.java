@@ -10,6 +10,9 @@ import android.view.ViewGroup;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
+
 import com.sindia.pdm3000.http.PdHttpRequest;
 import com.sindia.pdm3000.model.ParamSetData;
 
@@ -17,8 +20,13 @@ public class ParamSetFragment extends Fragment {
     //private ConfigViewModel configViewModel;
     private EditText mLineNameEdit;
     private EditText mJointNameEdit;
+    private EditText mIntervalTime;
+    private Spinner mFreqCenter;
+    private Spinner mFreqWidth;
+
     private Button mApplyChangeButton;
     private Button mReloadDataButton;
+    private Button mTestImageButton;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -27,20 +35,27 @@ public class ParamSetFragment extends Fragment {
 
         mLineNameEdit = root.findViewById(R.id.editTextLineName);
         mJointNameEdit = root.findViewById(R.id.editTextJointName);
+        mIntervalTime =  root.findViewById(R.id.editWorkInterval);
+        mFreqCenter = root.findViewById(R.id.spinnerFreqCenter);
+        mFreqWidth = root.findViewById(R.id.spinnerFreqWidth);
+        mTestImageButton = root.findViewById(R.id.buttonTest);
+
         mApplyChangeButton = root.findViewById(R.id.buttonApplyChange);
         mReloadDataButton = root.findViewById(R.id.buttonReloadData);
 
-        // 测试数据
-        mLineNameEdit.setText("默认线路");
-        mJointNameEdit.setText("默认接头");
-
         // 设置控件事件
+        //提交数据
         mApplyChangeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ParamSetData paramSet = new ParamSetData();
                 paramSet.lineName = mLineNameEdit.getText().toString();
                 paramSet.jointName = mJointNameEdit.getText().toString();
+                String freqCenter = mFreqCenter.getSelectedItem().toString();
+                String freqWidth = mFreqWidth.getSelectedItem().toString();
+                paramSet.work_interval  = Integer.valueOf(mIntervalTime.getText().toString());
+                paramSet.freq_center = GetFreqCenterValue(freqCenter);
+                paramSet.freq_width = GetFreqWidthValue(freqWidth);
                 PdHttpRequest.doPostParamSet(paramSet, new PdHttpRequest.Callback() {
                     @Override
                     public void onResponse(PdHttpRequest.ResponseBase resp) {
@@ -63,6 +78,7 @@ public class ParamSetFragment extends Fragment {
                 });
             }
         });
+        //获取数据
         mReloadDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,18 +89,78 @@ public class ParamSetFragment extends Fragment {
                             PdHttpRequest.ParamSetResp paramSetResp = (PdHttpRequest.ParamSetResp)resp;
                             mLineNameEdit.setText(paramSetResp.paramSet.lineName);
                             mJointNameEdit.setText(paramSetResp.paramSet.jointName);
+                            mIntervalTime.setText(Integer.toString(paramSetResp.paramSet.work_interval));
+
+                            int freq_center = paramSetResp.paramSet.freq_center;
+                            int freq_width = paramSetResp.paramSet.freq_width;
+                            SpinnerAdapter freqCenterAdapter = mFreqCenter.getAdapter();
+                            for(int i = 0; i<freqCenterAdapter.getCount(); i++)
+                            {
+                                if( freqCenterAdapter.getItem(i).equals(GetFreqCenterText(freq_center)))
+                                {
+                                    mFreqCenter.setSelection(i);
+                                    break;
+                                }
+                            }
+                            SpinnerAdapter freqWidthAdapter = mFreqWidth.getAdapter();
+                            for(int i = 0; i<freqWidthAdapter.getCount(); i++)
+                            {
+                                if( freqWidthAdapter.getItem(i).equals(GetFreqWidthText(freq_center)))
+                                {
+                                    mFreqWidth.setSelection(i);
+                                    break;
+                                }
+                            }
                         }
                     }
                 });
             }
         });
-        /*final TextView textView = root.findViewById(R.id.text_home);
-        configViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+        //测试图片
+        mTestImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onChanged(@Nullable String s) {
-                //textView.setText(s);
+            public void onClick(View view) {
+
             }
-        });*/
+        });
+
         return root;
+    }
+    public int GetFreqCenterValue(String freqCenterText)
+    {
+        String unit = "MHz";
+        int index = freqCenterText.indexOf(unit);
+        String temp = freqCenterText.substring(0,index);
+        int freqCenterValue = Integer.valueOf(temp);
+
+        return freqCenterValue;
+    }
+
+    public int GetFreqWidthValue(String freqWidthText)
+    {
+        String unit = "kHz";
+        int index = freqWidthText.indexOf(unit);
+        String temp = freqWidthText.substring(0,index);
+        int freqWidthValue = Integer.valueOf(temp);
+
+        return freqWidthValue;
+    }
+
+    public String GetFreqCenterText(int freqCenterValue)
+    {
+        String unit = "MHz";
+        String freqCenterText = Integer.toString(freqCenterValue);
+        freqCenterText += unit;
+
+        return freqCenterText;
+    }
+
+    public String GetFreqWidthText(int freqWidthValue)
+    {
+        String unit = "kHz";
+        String freqWidthText = Integer.toString(freqWidthValue);
+        freqWidthText += unit;
+
+        return freqWidthText;
     }
 }

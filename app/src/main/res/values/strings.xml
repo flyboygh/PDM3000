@@ -31,4 +31,13 @@
     <string name="frequency_band_set">检测频带设置：</string>
     <string name="freq_center">中心频点：</string>
     <string name="freq_bandwidth">频率带宽：</string>
+    <string name="label_line_name">线路名称：</string>
+    <string name="label_joint_name">接头名称：</string>
+    <string name="label_sleep_time">间歇时间：</string>
+    <string name="default_line_name">请输入线路名称</string>
+    <string name="default_joint_name">请输入接头名称</string>
+    <string name="default_interval_name">请输入间歇工作时间</string>
+    <string name="btn_test">测试</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

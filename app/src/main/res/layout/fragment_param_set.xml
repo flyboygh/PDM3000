@@ -13,6 +13,7 @@
         android:layout_marginTop="18dp"
         android:text="@string/frequency_band_set"
         android:textColor="@color/colorText"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/imageView4"
         app:layout_constraintTop_toBottomOf="@+id/divider2" />
@@ -25,36 +26,45 @@
         android:layout_marginTop="18dp"
         android:text="@string/interval_time_set"
         android:textColor="@color/colorText"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/imageView3"
         app:layout_constraintTop_toBottomOf="@+id/divider" />
 
-    <EditText
+    <com.sindia.pdm3000.custom.ClearableEditText
         android:id="@+id/editTextLineName"
-        android:layout_width="160dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="110dp"
-        android:layout_marginTop="9dp"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="40dp"
+        android:autofillHints="@string/default_line_name"
+        android:background="@drawable/edit_text"
         android:ems="10"
         android:inputType="textPersonName|text"
-        android:text="Name"
+        android:text="@string/default_line_name"
         android:textColor="@color/colorText"
         android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView7"
         app:layout_constraintTop_toBottomOf="@+id/textCableInfo" />
 
-    <EditText
+    <com.sindia.pdm3000.custom.ClearableEditText
         android:id="@+id/editTextJointName"
-        android:layout_width="160dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="110dp"
-        android:layout_marginTop="4dp"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="40dp"
+        android:autofillHints="@string/default_joint_name"
+        android:background="@drawable/edit_text"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Name"
+        android:text="@string/default_joint_name"
         android:textColor="@color/colorText"
         android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView8"
         app:layout_constraintTop_toBottomOf="@+id/editTextLineName" />
 
     <TextView
@@ -62,20 +72,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="8dp"
         android:text="@string/cable_info"
         android:textColor="@color/colorText"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/imageView2"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
     <View
         android:id="@+id/divider"
-        android:layout_width="409dp"
-        android:layout_height="8dp"
-        android:layout_marginTop="5dp"
-        android:background="?android:attr/listDivider"
+        android:layout_width="0dp"
+        android:layout_height="6dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/colorDivider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -86,41 +96,44 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="21dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="64dp"
         android:text="秒"
         android:textColor="@color/colorText"
-        app:layout_constraintStart_toEndOf="@+id/editTextNumber"
+        app:layout_constraintStart_toEndOf="@+id/editWorkInterval"
         app:layout_constraintTop_toBottomOf="@+id/divider" />
 
     <View
         android:id="@+id/divider2"
-        android:layout_width="409dp"
-        android:layout_height="8dp"
-        android:layout_marginTop="12dp"
-        android:background="?android:attr/listDivider"
+        android:layout_width="0dp"
+        android:layout_height="6dp"
+        android:layout_marginTop="28dp"
+        android:background="@color/colorDivider"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumber" />
+        app:layout_constraintTop_toBottomOf="@+id/editWorkInterval" />
 
     <EditText
-        android:id="@+id/editTextNumber"
-        android:layout_width="88dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="110dp"
-        android:layout_marginTop="8dp"
+        android:id="@+id/editWorkInterval"
+        android:layout_width="150dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/edit_text"
         android:ems="10"
         android:inputType="number"
-        android:textColor="#03A9F4"
+        android:text="@string/default_interval_name"
+        android:textColor="@color/colorText"
         android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView9"
         app:layout_constraintTop_toBottomOf="@+id/textCableInfo2" />
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="56dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginStart="53dp"
+        android:layout_marginTop="32dp"
         android:text="@string/freq_center"
         android:textColor="@color/colorText"
         android:textStyle="bold"
@@ -131,8 +144,8 @@
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="56dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginStart="53dp"
+        android:layout_marginTop="36dp"
         android:text="@string/freq_bandwidth"
         android:textColor="@color/colorText"
         android:textStyle="bold"
@@ -140,69 +153,78 @@
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
     <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="130dp"
-        android:layout_height="22dp"
-        android:layout_marginStart="18dp"
-        android:layout_marginTop="40dp"
+        android:id="@+id/spinnerFreqCenter"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="40dp"
+        android:background="@drawable/spinner_selector"
         android:entries="@array/FrequencyCenter"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView4"
-        app:layout_constraintTop_toBottomOf="@+id/divider2" />
+        app:layout_constraintTop_toBottomOf="@+id/textCableInfo3" />
 
     <Spinner
-        android:id="@+id/spinner2"
-        android:layout_width="131dp"
-        android:layout_height="23dp"
-        android:layout_marginStart="18dp"
+        android:id="@+id/spinnerFreqWidth"
+        android:layout_width="0dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="22dp"
+        android:layout_marginEnd="40dp"
+        android:background="@drawable/spinner_selector"
         android:entries="@array/FrequencyBandwidth"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView5"
-        app:layout_constraintTop_toBottomOf="@+id/spinner" />
+        app:layout_constraintTop_toBottomOf="@+id/spinnerFreqCenter" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="200dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="28dp"
+        android:layout_width="240dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner2">
+        app:layout_constraintTop_toTopOf="parent">
 
         <Button
             android:id="@+id/buttonApplyChange"
-            android:layout_width="80dp"
-            android:layout_height="30dp"
+            android:layout_width="110dp"
+            android:layout_height="35dp"
             android:background="@drawable/btn_selector"
             android:text="@string/apply_change"
-            android:textColor="#FFFFFF" />
+            android:textColor="@color/colorText"
+            android:textStyle="normal" />
 
         <Button
             android:id="@+id/buttonReloadData"
-            android:layout_width="80dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="40dp"
+            android:layout_width="110dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="20dp"
             android:background="@drawable/btn_selector"
             android:text="@string/load_config"
-            android:textColor="#FFFFFF" />
+            android:textColor="@color/colorText" />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="icon"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         app:srcCompat="@drawable/vector_drawable_cable_info" />
 
     <ImageView
         android:id="@+id/imageView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
+        android:contentDescription="icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider"
         app:srcCompat="@drawable/vector_drawable_time_set" />
@@ -211,11 +233,60 @@
         android:id="@+id/imageView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
+        android:contentDescription="icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider2"
         app:srcCompat="@drawable/vector_drawable_freq_set" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="53dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/label_line_name"
+        android:textColor="@color/colorText"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textCableInfo" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="53dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/label_joint_name"
+        android:textColor="@color/colorText"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="53dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/label_sleep_time"
+        android:textColor="@color/colorText"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textCableInfo2" />
+
+    <Button
+        android:id="@+id/buttonTest"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="40dp"
+        android:background="@drawable/btn_circle"
+        android:text="@string/btn_test"
+        android:textColor="@color/colorBackground"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerFreqWidth" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,7 +17,7 @@
         <bitmap
             android:gravity="end"
             android:src="@drawable/combo_dropdown"
-            android:width="12dp">
+            android:width="12dp"
             android:height="12dp">
         </bitmap>
     </item>

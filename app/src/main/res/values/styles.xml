@@ -5,6 +5,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
     </style>
 
     <!-- 隐藏标题栏和状态栏 -->
@@ -13,6 +14,24 @@
         <item name="android:windowFullscreen">false</item> <!--不能开这个，否则系统标题文字会飞出去-->
         <item name="android:statusBarColor">@color/colorPrimary</item>
         <item name="android:windowBackground">@color/colorBackground</item>
+    </style>
+
+    <style name="FullscreenTheme" parent="NoTitle">
+        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
+        <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
+    </style>
+
+    <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/black_overlay</item>
+    </style>
+
+    <style name="MySwitch" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">@color/colorPrimary</item>
+        <item name="colorSwitchThumbNormal">@color/switchThumbInactive</item>
+        <item name="android:colorForeground">@color/switchTrackInactive</item>
     </style>
 
 </resources>

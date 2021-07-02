@@ -17,6 +17,9 @@ import okhttp3.Response;
 public class OkHttpHelper {
     // 常用宏定义
     private static final int kHttpPostTimeoutS = 5;
+    private static final int MAX_REV_LEN = 1024000;
+    private static final int RETURN_TYPE_JSON = 1;
+    private static final int RETURN_TYPE_CHUNK = 2;
 
     // 向URL链接POST数据，成功返回true，失败返回false
     public static boolean postHttpRequest(final String url, final String body, final OkHttpCallback callback) {
@@ -47,11 +50,19 @@ public class OkHttpHelper {
 //我们创建了一个Request对象并设置为POST方法,把requestBody加入了它
 
                 int code = -1;
-                String result = "";
+                byte[] resultByte = new byte[MAX_REV_LEN];
+                int resultType = RETURN_TYPE_CHUNK;
                 try {
                     Response response = client.newCall(request).execute();
                     code = response.code();
-                    result = response.body().string();//获得String对象
+                    String responseHeader = response.header("Content-Type");
+                    if(responseHeader.equals("application/json")){
+                        resultType = RETURN_TYPE_JSON;
+                    }
+                    else{
+                        resultType = RETURN_TYPE_CHUNK;
+                    }
+                    resultByte = response.body().bytes();
                     //byte[] byteData = response.body().bytes();//获得byte对象
                     //InputStream is = response.body().byteStream();//获得输入流
 
@@ -61,13 +72,14 @@ public class OkHttpHelper {
                     Log.e("", e.getMessage());
                 }
                 final int f_code = code;
-                final String f_result = result;
+                final int f_type = resultType;
+                final byte[]  f_result_byte = resultByte;
                 Handler mainThread = new Handler(Looper.getMainLooper());
                 mainThread.post(new Runnable() {
                     @Override
                     public void run() {
-                        callback.onHttpRespond(f_code, f_result);
-                        //callback.onHttpRespond(code, result);
+                            callback.onHttpRespond(f_code,f_type,f_result_byte);
+                            //callback.onHttpRespond(code, result);
                     }
                 });
             }
@@ -77,7 +89,8 @@ public class OkHttpHelper {
 
     // 请求响应回调（测试接口）
     public interface OkHttpCallback {
-        public void onHttpRespond(int code, String body);
+        //public void onHttpRespond(int code, String body);
+        public void onHttpRespond(int code ,int type,byte[]body);
     }
 
     // http请求（测试方法）
@@ -113,13 +126,21 @@ public class OkHttpHelper {
                 try {
                     Response response = client.newCall(request).execute();
                     int code = response.code();
-                    String result = response.body().string();//获得String对象
+                    String responseHeader = response.header("Content-Type");
+                    byte[] resultByte  = response.body().bytes();//获得String对象
                     //byte[] byteData = response.body().bytes();//获得byte对象
                     //InputStream is = response.body().byteStream();//获得输入流
 
                     //String s = String.valueOf(response.body());
                     //Log.i("", s);
-                    callback.onHttpRespond(code, result);
+                    int resultType = RETURN_TYPE_CHUNK;
+                    if(responseHeader.equals("application/json")){
+                        resultType = RETURN_TYPE_JSON;
+                    }
+                    else{
+                        resultType = RETURN_TYPE_CHUNK;
+                    }
+                    callback.onHttpRespond(code, resultType,resultByte);
                 } catch (IOException e) {
                     Log.e("", e.getMessage());
                 }

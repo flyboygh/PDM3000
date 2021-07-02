@@ -8,38 +8,26 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class MainNavigation extends RelativeLayout implements View.OnClickListener {
+public class SubNavigation extends RelativeLayout implements View.OnClickListener {
     private ImageView iv_navi_back;                // 返回按钮
     private TextView tv_navi_title;                // 中间的标题
-    private ImageView iv_navi_right;               // 右边的按钮
 
-    public MainNavigation(Context context)
+
+    public SubNavigation(Context context)
     {
         this(context,null);
     }
 
-    public MainNavigation(Context context, AttributeSet attrs)
+    public SubNavigation(Context context, AttributeSet attrs)
     {
         super(context,attrs);
 
-        View view  = LayoutInflater.from(context).inflate(R.layout.navigation_main,this,true);
+        View view  = LayoutInflater.from(context).inflate(R.layout.navigation_sub,this,true);
 
         iv_navi_back = (ImageView) findViewById(R.id.iv_navi_back);
         iv_navi_back.setOnClickListener(this);
 
         tv_navi_title = (TextView) findViewById(R.id.tv_navi_title);
-
-        iv_navi_right = (ImageView) findViewById(R.id.iv_navi_right);
-        iv_navi_right.setOnClickListener(this);
-    }
-
-    /***
-     * 获取返回按钮
-     * @return iv_navi_back
-     */
-    public ImageView getIv_navi_back()
-    {
-        return iv_navi_back;
     }
 
     /***
@@ -61,22 +49,13 @@ public class MainNavigation extends RelativeLayout implements View.OnClickListen
     }
 
 
-    /***
-     * 获取右边的按钮
-     * @return iv_navi_right
-     */
-    public ImageView getIv_navi_right()
-    {
-        return iv_navi_right;
-    }
-
-    private ClickCallback callback;                 // 声明回调函数
+    private SubNavigation.ClickCallback callback;                 // 声明回调函数
 
     /***
      * 设置按钮点击回调的接口
      * @param callback
      */
-    public void setClickCallback(ClickCallback callback)
+    public void setClickCallback(SubNavigation.ClickCallback callback)
     {
         this.callback = callback;
     }

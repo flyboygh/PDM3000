@@ -15,4 +15,9 @@
         <item>500kHz</item>
         <item>1MHz</item>
     </string-array>
+    <string-array name="PDType">
+        <item>检测到放电信号</item>
+        <item>未检测到放电信号</item>
+        <item>全部</item>
+    </string-array>
 </resources>

@@ -62,11 +62,10 @@
         app:layout_constraintStart_toEndOf="@+id/textViewDeviceList"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <Switch
         android:id="@+id/buttonOpenWifi"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
-        android:text="@string/open_wifi"
         android:textSize="14sp"
         app:layout_constraintStart_toEndOf="@+id/textViewWifiList"
         app:layout_constraintTop_toBottomOf="@+id/listviewDevices" />

@@ -27,6 +27,7 @@ public class WifiAdapter extends BaseAdapter implements View.OnClickListener {
     private Context mContext = null;
     private Callback mCallback = null;
     private WifiAdmin mWiFiAdmin = null;
+
     private List<ScanResult> mShowWifiList = new ArrayList<>(); // 当前‘有效的’无线网列表，可以在界面上显示的
 
     // 上层回调

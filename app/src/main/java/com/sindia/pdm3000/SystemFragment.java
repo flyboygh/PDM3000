@@ -1,6 +1,7 @@
 package com.sindia.pdm3000;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 
 import android.bluetooth.BluetoothDevice;
@@ -16,6 +17,7 @@ import android.widget.Button;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.sindia.pdm3000.adapter.BleDeviceAdapter;
@@ -46,14 +48,14 @@ public class SystemFragment extends Fragment implements BluetoothUtil.BluetoothS
     private ImageButton mWifiImageBtn;
     private ImageButton mConnImageBtn;
     // 蓝牙相关的
-    private Button mScanBleButton;
+    private SwitchCompat mScanBleButton;
     private TextView mCountDownTextView;
     private ListView mDeviceListView = null;
     private BleManager mBleManager;
     private BleDeviceAdapter mDeviceAdapter;
     private BluetoothUtil _BluetoothUtil = null;
     // 无线网相关的
-    private Button mOpenWifiButton;
+    private SwitchCompat mOpenWifiButton;
     private ListView mWifiListView = null;
     private WifiAdapter mWifiAdapter;
     private WifiAdmin mWiFiAdmin;
@@ -341,8 +343,12 @@ public class SystemFragment extends Fragment implements BluetoothUtil.BluetoothS
                 });
             }
             if (PdHttpRequest.isHttpConnected()) {
+                MainActivity mainActivity = (MainActivity)getActivity();
+                mainActivity.setIs_connected(true);
                 mConnImageBtn.setBackgroundResource(R.drawable.icon_connected);
             } else {
+                MainActivity mainActivity = (MainActivity)getActivity();
+                mainActivity.setIs_connected(false);
                 mConnImageBtn.setBackgroundResource(R.drawable.icon_disconnect);
             }
         }
@@ -401,11 +407,13 @@ public class SystemFragment extends Fragment implements BluetoothUtil.BluetoothS
         boolean bluetoothEnable = _BluetoothUtil.getBlueToothState();
         if (bluetoothEnable) { // 蓝牙已开启
             if (mBleScanning) { // 正在扫描蓝牙
-                mScanBleButton.setText(R.string.stop_scan);
+                //mScanBleButton.setText(R.string.stop_scan);
+                mScanBleButton.setChecked(true);
             } else {
-                mScanBleButton.setText(R.string.start_scan);
+                mScanBleButton.setChecked(false);
+                //mScanBleButton.setText(R.string.start_scan);
             }
-            mScanBleButton.setTextColor(Color.BLACK);
+            //mScanBleButton.setTextColor(Color.BLACK);
             //btn.setBackgroundColor(Color.WHITE);
         } else { // 蓝牙未开启
             if (mBleScanning) { // 正在扫描蓝牙
@@ -414,8 +422,9 @@ public class SystemFragment extends Fragment implements BluetoothUtil.BluetoothS
                     mBleScanning = false;
                 }
             }
-            mScanBleButton.setText(R.string.open_ble);
-            mScanBleButton.setTextColor(Color.RED);
+            mScanBleButton.setChecked(false);
+            //mScanBleButton.setText(R.string.open_ble);
+            //mScanBleButton.setTextColor(Color.RED);
             //btn.setBackgroundColor(Color.RED);
         }
         // 设置蓝牙倒计时文字
@@ -427,9 +436,11 @@ public class SystemFragment extends Fragment implements BluetoothUtil.BluetoothS
         // 设置无线按钮状态
         if (mWiFiAdmin.isWifiEnabled()) { // WIFI已开启
             mOpenWifiButton.setVisibility(View.INVISIBLE);
+            mOpenWifiButton.setChecked(true);
         } else {
-            mOpenWifiButton.setTextColor(Color.RED);
+           // mOpenWifiButton.setTextColor(Color.RED);
             mOpenWifiButton.setVisibility(View.VISIBLE);
+            mOpenWifiButton.setChecked(false);
         }
     }
 

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".TestImageActivity">
+
+    <com.sindia.pdm3000.SubNavigation
+        android:id="@+id/naviMain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/fragment_parent_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/naviMain" />
+
+    <TextView
+        android:id="@+id/textWaitImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="213dp"
+        android:text="TextView"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_parent_view" />
+
+    <LinearLayout
+        android:id="@+id/layoutSpectrum"
+        android:layout_width="300dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="1dp"
+        android:orientation="vertical"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.51"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_parent_view"
+        app:layout_constraintVertical_bias="0.49">
+
+
+        <ImageView
+            android:id="@+id/imagePhaseA"
+            android:layout_width="match_parent"
+            android:layout_height="221dp"
+            android:layout_marginTop="20dp"
+            android:padding="20dp"
+            android:src="@drawable/ic_home_black_24dp" />
+
+
+        <ImageView
+            android:id="@+id/imagePhaseB"
+            android:layout_width="match_parent"
+            android:layout_height="221dp"
+            android:layout_marginTop="20dp"
+            android:padding="20dp"
+            android:src="@drawable/ic_baseline_save_24" />
+
+        <ImageView
+            android:id="@+id/imagePhaseC"
+            android:layout_width="match_parent"
+            android:layout_height="221dp"
+            android:layout_marginTop="20dp"
+            android:padding="20dp"
+            android:src="@drawable/ic_baseline_cast_connected_24" />
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {// implements BottomNavigat
     private DataViewFragment mDataViewFragment;
     private Fragment[] mAllFragments;
     private int mLastFragment;//用于记录上个选择的Fragment
+    private boolean is_connected;
 
     // 底部导航控件
     BottomNavigationView mBottomNavView;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {// implements BottomNavigat
         requestWindowFeature(FEATURE_NO_TITLE);
         // 隐藏状态栏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 */
         setContentView(R.layout.activity_main); // test push code, test push code
@@ -79,18 +81,19 @@ public class MainActivity extends AppCompatActivity {// implements BottomNavigat
         mBottomNavView.setItemTextColor(csl);
 
         // 创建所有flagment
-        mSystemFragment = new SystemFragment();
+
         mParamSetFragment = new ParamSetFragment();
         mDataReadFragment = new DataReadFragment();
         mDataViewFragment = new DataViewFragment();
-        mAllFragments = new Fragment[]{mSystemFragment, mParamSetFragment, mDataReadFragment, mDataViewFragment};
+        mSystemFragment = new SystemFragment();
+        mAllFragments = new Fragment[]{mParamSetFragment, mDataReadFragment, mDataViewFragment,mSystemFragment };
         mLastFragment = 0;
 
         // 显示最左侧的页签视图
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         //transaction.add(R.id.fragment_parent_view, mSystemFragment);
         //transaction.add(R.id.fragment_parent_view, mConfigFragment);
-        transaction.replace(R.id.fragment_parent_view, mSystemFragment)
+        transaction.replace(R.id.fragment_parent_view, mParamSetFragment)
                 .show(mSystemFragment)
                 .commit();
 /*
@@ -108,6 +111,13 @@ public class MainActivity extends AppCompatActivity {// implements BottomNavigat
 */
     }
 
+    public void setIs_connected(boolean value){
+        is_connected = value;
+    }
+    public boolean getIs_connected()
+    {
+        return is_connected;
+    }
     // 顶部导航栏事件
     private MainNavigation.ClickCallback mMainNavigationCallBack = new MainNavigation.ClickCallback() {
         @Override
@@ -130,29 +140,29 @@ public class MainActivity extends AppCompatActivity {// implements BottomNavigat
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.bottom_menu_system: {
+                    mMainNavigation.setTitle(getString(R.string.pd_device_check));
+                    if (switchFragmentByIndex(3)) {
+                        return true;
+                    }
+                    break;
+                }
+                case R.id.bottom_menu_param_set: {
                     mMainNavigation.setTitle(getString(R.string.app_title));
                     if (switchFragmentByIndex(0)) {
                         return true;
                     }
                     break;
                 }
-                case R.id.bottom_menu_param_set: {
-                    mMainNavigation.setTitle(getString(R.string.pd_param_set));
-                    if (switchFragmentByIndex(1)) {
-                        return true;
-                    }
-                    break;
-                }
                 case R.id.bottom_menu_data_read: {
                     mMainNavigation.setTitle(getString(R.string.pd_data_read));
-                    if (switchFragmentByIndex(2)) {
+                    if (switchFragmentByIndex(1)) {
                         return true;
                     }
                     break;
                 }
                 case R.id.bottom_menu_data_view: {
                     mMainNavigation.setTitle(getString(R.string.pd_data_view));
-                    if (switchFragmentByIndex(3)) {
+                    if (switchFragmentByIndex(2)) {
                         return true;
                     }
                     break;
